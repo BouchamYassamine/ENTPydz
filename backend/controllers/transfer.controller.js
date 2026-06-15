@@ -3,11 +3,12 @@ import prisma from '../db.js';
 
 export const getTransfers = async (req, res, next) => {
   try {
-    const { role, service } = req.user;
-    let whereClause = {};
-    if (role !== 'Admin') {
-      whereClause = { OR: [{ sourceService: service }, { destinationService: service }] };
-    }
+    const { role, id: userId } = req.user;
+    // Règle 3 : Admin voit TOUS les transferts
+    // Règle 2 : Utilisateur ne voit que SES propres transferts
+    const whereClause = role === 'Admin' 
+      ? {} 
+      : { requesterId: userId };
     const transfers = await prisma.transfer.findMany({
       where: whereClause,
       include: {
@@ -23,6 +24,11 @@ export const getTransfers = async (req, res, next) => {
 
 export const createTransfer = async (req, res, next) => {
   try {
+    // Règle 1 : Admin ne peut pas créer de transfert
+    if (req.user.role === 'Admin') {
+      return res.status(403).json({ success: false, message: 'Les administrateurs ne peuvent pas créer de transferts' });
+    }
+
     const { materialId, destinationService, comments } = req.body;
     const { service: sourceService, id: requesterId } = req.user;
 

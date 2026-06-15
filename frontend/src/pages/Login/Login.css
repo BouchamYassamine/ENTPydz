@@ -1,9 +1,11 @@
 /* =============================================
    LOGIN PAGE — ENTP Thème Orange Premium
+   Reproduit le mockup officiel ENTP
    ============================================= */
 
-/* Conteneur plein écran */
+/* ---- Conteneur plein écran ---- */
 .login-page {
+  position: relative;
   display: flex;
   min-height: 100vh;
   width: 100vw;
@@ -11,143 +13,247 @@
   font-family: var(--font-family);
 }
 
-/* ---- CÔTÉ GAUCHE : Image de fond ---- */
+/* ---- FOND : Image plein écran ---- */
 .login-bg-section {
-  flex: 1.1;
-  position: relative;
+  position: absolute;
+  inset: 0;
   background-image: url('/images/entp-building.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  min-height: 100vh;
+  z-index: 0;
 }
 
-/* Superposition sombre subtile pour lisibilité */
+/* Overlay sombre dégradé gauche-droite pour lisibilité */
 .login-bg-section::before {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.25) 0%,
-    rgba(0, 0, 0, 0.1) 40%,
-    rgba(232, 97, 26, 0.0) 60%
+    90deg,
+    rgba(0, 0, 0, 0.50) 0%,
+    rgba(0, 0, 0, 0.30) 40%,
+    rgba(0, 0, 0, 0.10) 70%,
+    rgba(0, 0, 0, 0.02) 100%
   );
   z-index: 1;
 }
 
-/* Bande diagonale orange en bas de l'image */
+/* Pas de bande orange */
 .login-bg-section::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 35%;
-  background: linear-gradient(
-    15deg,
-    rgba(232, 97, 26, 0.85) 0%,
-    rgba(232, 97, 26, 0.4) 50%,
-    transparent 100%
-  );
-  z-index: 2;
+  content: none;
 }
 
-/* Logo ENTP dans le coin supérieur gauche sur l'image */
-.login-bg-logo {
-  position: relative;
-  z-index: 3;
-  padding: 2rem 2.5rem;
+/* ---- SÉLECTEUR DE LANGUE (haut droite) ---- */
+.language-selector {
+  position: fixed;
+  top: 1.5rem;
+  right: 2rem;
+  z-index: 20;
   display: flex;
   align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.language-selector:hover {
+  color: white;
+}
+.language-selector .chevron {
+  font-size: 0.65rem;
+  margin-left: 2px;
+  opacity: 0.7;
+}
+
+/* ---- LOGO ENTP (haut gauche) ---- */
+.login-logo-container {
+  position: fixed;
+  top: 2rem;
+  left: 2.5rem;
+  z-index: 20;
+}
+
+.logo-illustration {
+  display: flex;
+  align-items: flex-start;
   gap: 1rem;
 }
 
-.login-bg-logo-icon {
-  width: 48px;
-  height: 48px;
-  background: rgba(232, 97, 26, 0.9);
-  border-radius: 10px;
+.derrick-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-weight: 900;
-  font-size: 1.1rem;
-  letter-spacing: 1px;
-  box-shadow: 0 4px 12px rgba(232, 97, 26, 0.3);
+  margin-top: 4px;
 }
 
-.login-bg-logo-text {
+.logo-text-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.logo-entp-title {
+  color: white;
+  font-size: 2.4rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.logo-arabic {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: right;
+  line-height: 1.4;
+  margin-top: 2px;
+  margin-bottom: 6px;
+  width: 100%;
+  direction: rtl;
+}
+
+.logo-orange-line {
+  width: 100%;
+  height: 3px;
+  background-color: var(--primary-color);
+  margin-bottom: 6px;
+  border-radius: 2px;
+}
+
+.logo-sonatrach {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ---- CONTENU BAS GAUCHE ---- */
+.login-bottom-content {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  padding: 0 2.5rem 2rem 2.5rem;
+  max-width: 55%;
+}
+
+.main-title {
+  color: white;
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 0.3rem;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+.main-subtitle {
+  color: var(--primary-color);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+}
+
+.features-container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  width: fit-content;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: white;
+}
+
+.feature-icon {
+  color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+.feature-text {
   display: flex;
   flex-direction: column;
 }
 
-.login-bg-logo-text h1 {
-  color: white;
-  font-size: 1.6rem;
-  font-weight: 800;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+.feature-text strong {
+  font-size: 0.88rem;
+  font-weight: 700;
   line-height: 1.2;
 }
 
-.login-bg-logo-text span {
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.65rem;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+.feature-text span {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 400;
 }
 
-/* ---- CÔTÉ DROIT : Carte de connexion ---- */
+.feature-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+/* ===========================================================
+   CÔTÉ DROIT : Carte de connexion flottante
+   =========================================================== */
 .login-card-section {
-  flex: 0.9;
+  position: relative;
+  z-index: 10;
+  margin-left: auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--white);
-  padding: 3rem;
-  position: relative;
-  box-shadow: -5px 0 30px rgba(0, 0, 0, 0.08);
+  padding: 2rem 3rem;
+  min-height: 100vh;
 }
 
 .login-card {
-  width: 100%;
-  max-width: 420px;
+  width: 420px;
+  background: white;
+  border-radius: 16px;
+  padding: 2.5rem 2.8rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255,255,255,0.1);
 }
 
-/* En-tête de la carte */
+/* ---- En-tête de la carte ---- */
 .login-card-header {
-  margin-bottom: 2rem;
+  margin-bottom: 1.8rem;
 }
 
 .login-card-header h2 {
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 900;
   color: var(--dark-color);
   letter-spacing: 2px;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
 .login-card-header .subtitle {
-  font-size: 0.95rem;
-  color: var(--gray-500);
-  font-weight: 400;
+  font-size: 0.78rem;
+  color: var(--gray-600);
+  font-weight: 600;
   line-height: 1.5;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 /* Barre de séparation orange */
 .login-divider-bar {
-  width: 50px;
-  height: 4px;
-  background: var(--primary-color);
-  border-radius: 2px;
-  margin: 1.5rem 0;
+  display: none; /* On n'en a pas besoin selon le mockup */
 }
 
 /* Section "Connexion" titre */
@@ -155,30 +261,26 @@
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  margin-bottom: 1.8rem;
-}
-
-.login-section-title .icon {
-  color: var(--primary-color);
+  margin-bottom: 1.5rem;
 }
 
 .login-section-title h3 {
   font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--primary-color);
+  font-weight: 800;
+  color: var(--dark-color);
 }
 
-/* Champs de formulaire stylisés */
+/* ---- Champs de formulaire ---- */
 .form-group {
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
   display: block;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--gray-600);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
 .input-wrapper {
@@ -199,10 +301,10 @@
 
 .input-wrapper input {
   width: 100%;
-  padding: 0.85rem 0.9rem 0.85rem 2.8rem;
+  padding: 0.78rem 0.9rem 0.78rem 2.7rem;
   border: 1.5px solid var(--gray-200);
   border-radius: var(--border-radius);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   color: var(--dark-color);
   background: var(--gray-100);
   transition: all 0.25s ease;
@@ -212,6 +314,7 @@
   border-color: var(--primary-color);
   background: var(--white);
   box-shadow: 0 0 0 3px rgba(232, 97, 26, 0.1);
+  outline: none;
 }
 
 .input-wrapper input::placeholder {
@@ -241,8 +344,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
-  font-size: 0.82rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.8rem;
 }
 
 .remember-me {
@@ -254,8 +357,8 @@
 }
 
 .remember-me input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   accent-color: var(--primary-color);
   cursor: pointer;
 }
@@ -272,15 +375,15 @@
   text-decoration: underline;
 }
 
-/* Bouton principal "Se connecter" */
+/* ---- Bouton "Se connecter" ---- */
 .btn-login {
   width: 100%;
-  padding: 0.9rem 1.5rem;
+  padding: 0.85rem 1.5rem;
   background: var(--primary-color);
   color: white;
   border: none;
   border-radius: var(--border-radius);
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: 0.3px;
   cursor: pointer;
@@ -315,9 +418,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-left: auto;
 }
 
-/* Spinner de chargement */
+/* Spinner */
 .btn-spinner {
   width: 20px;
   height: 20px;
@@ -336,10 +440,10 @@
   background-color: #fef2f2;
   border: 1px solid #fecaca;
   color: var(--danger-color);
-  padding: 0.75rem 1rem;
+  padding: 0.7rem 1rem;
   border-radius: var(--border-radius);
-  font-size: 0.85rem;
-  margin-bottom: 1.5rem;
+  font-size: 0.82rem;
+  margin-bottom: 1.2rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -352,11 +456,11 @@
   75% { transform: translateX(5px); }
 }
 
-/* Séparateur "OU" */
+/* ---- Séparateur "OU" ---- */
 .login-separator {
   display: flex;
   align-items: center;
-  margin: 1.8rem 0;
+  margin: 1.4rem 0;
   gap: 1rem;
 }
 
@@ -369,25 +473,25 @@
 }
 
 .login-separator span {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--gray-400);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
-/* Boutons de connexion rapide */
+/* ---- Boutons de connexion rapide ---- */
 .quick-login-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.8rem;
+  gap: 0.7rem;
 }
 
 .btn-quick-login {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.75rem 1rem;
+  padding: 0.65rem 0.8rem;
   background: var(--white);
   border: 1.5px solid var(--gray-200);
   border-radius: var(--border-radius);
@@ -403,8 +507,8 @@
 }
 
 .btn-quick-login .quick-icon {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -429,23 +533,23 @@
 }
 
 .btn-quick-login .quick-text strong {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
   color: var(--dark-color);
 }
 
 .btn-quick-login .quick-text span {
-  font-size: 0.7rem;
+  font-size: 0.67rem;
   color: var(--gray-400);
   font-weight: 400;
 }
 
-/* Footer */
+/* ---- Footer ---- */
 .login-footer {
-  margin-top: 2.5rem;
+  margin-top: 2rem;
   text-align: center;
-  font-size: 0.75rem;
-  color: var(--gray-400);
+  font-size: 0.72rem;
+  color: var(--gray-500);
   line-height: 1.6;
 }
 
@@ -454,25 +558,50 @@
   font-weight: 700;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1024px) {
-  .login-page {
-    flex-direction: column;
+/* ===========================================================
+   RESPONSIVE
+   =========================================================== */
+@media (max-width: 1100px) {
+  .login-bottom-content {
+    max-width: 45%;
   }
-  .login-bg-section {
-    flex: none;
-    min-height: 220px;
-    max-height: 280px;
+  .main-title {
+    font-size: 1.8rem;
   }
-  .login-card-section {
-    flex: 1;
-    padding: 2rem 1.5rem;
+  .login-card {
+    width: 380px;
+    padding: 2rem 2.2rem;
   }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 900px) {
+  .login-bottom-content {
+    display: none;
+  }
   .login-card-section {
-    padding: 1.5rem 1rem;
+    padding: 2rem;
+  }
+  .login-card {
+    width: 400px;
+  }
+}
+
+@media (max-width: 600px) {
+  .login-logo-container {
+    display: none;
+  }
+  .language-selector {
+    display: none;
+  }
+  .login-card-section {
+    margin: 0;
+    width: 100%;
+    padding: 1.5rem;
+  }
+  .login-card {
+    width: 100%;
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
   }
   .login-card-header h2 {
     font-size: 1.6rem;

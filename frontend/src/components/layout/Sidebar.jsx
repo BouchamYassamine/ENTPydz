@@ -48,8 +48,8 @@ const Sidebar = () => {
       {/* Menu principal */}
       <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', flexGrow: 1 }}>
         
-        {/* Dashboard pour Responsables et autres agents */}
-        {isRole(['Responsable Service', 'Agent Logistique', 'Consultant']) && (
+        {/* Dashboard pour tous les utilisateurs non-Admin */}
+        {!isRole(['Admin', 'ADMIN']) && (
           <NavLink 
             to="/dashboard"
             style={({ isActive }) => navItemStyle(isActive)}
@@ -84,12 +84,17 @@ const Sidebar = () => {
           Suivi Transferts
         </NavLink>
 
+<<<<<<< Updated upstream
         {/* Faire une demande de transfert (Admin & Responsable) */}
 <<<<<<< HEAD
         {isRole(['Admin', 'ADMIN', 'Responsable Service']) && (
 =======
         {isRole(['Admin', 'Responsable Service']) && (
 >>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
+=======
+        {/* Nouveau Transfert — Règle 1 : caché pour Admin */}
+        {!isRole(['Admin', 'ADMIN']) && (
+>>>>>>> Stashed changes
           <NavLink 
             to="/transfers/new"
             style={({ isActive }) => navItemStyle(isActive)}

@@ -27,7 +27,7 @@ const AppRoutes = () => {
         <Route path="/transfers" element={<TransferList />} />
         <Route path="/transfers/:id" element={<TransferDetail />} />
 
-        {/* Dashboard générique pour responsables ou agents */}
+        {/* Dashboard générique pour tous les utilisateurs non-Admin */}
         <Route 
           path="/dashboard" 
           element={
@@ -58,13 +58,17 @@ const AppRoutes = () => {
           } 
         />
 
+<<<<<<< Updated upstream
 =======
 >>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
         {/* Création de transferts (uniquement Admin et Responsables) */}
+=======
+        {/* Création de transferts — Règle 1 : interdit pour Admin */}
+>>>>>>> Stashed changes
         <Route 
           path="/transfers/new" 
           element={
-            <ProtectedRoute allowedRoles={['Admin', 'Responsable Service']}>
+            <ProtectedRoute allowedRoles={['Responsable Service', 'Agent Logistique', 'Consultant']}>
               <NewTransfer />
             </ProtectedRoute>
           } 

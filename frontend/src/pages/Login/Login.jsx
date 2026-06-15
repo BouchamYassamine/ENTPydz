@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import useAuth from '../../hooks/useAuth.js';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, Shield, User } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, Shield, User, Globe, HardHat, Settings, Users } from 'lucide-react';
 import './Login.css';
 
 const Login = () => {
@@ -38,17 +38,57 @@ const Login = () => {
     <div className="login-page">
       {/* ---- CÔTÉ GAUCHE : Image de fond avec superposition ---- */}
       <div className="login-bg-section">
-        <div className="login-bg-logo">
-          <div className="login-bg-logo-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-            </svg>
+        {/* Sélecteur de langue */}
+        <div className="language-selector">
+          <Globe size={16} /> Français <span className="chevron">v</span>
+        </div>
+
+        {/* Logo ENTP en haut à gauche */}
+        <div className="login-logo-container">
+          <div className="logo-illustration">
+             <div className="derrick-icon">
+                <svg width="40" height="60" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L8 22M12 2l4 20M8 8h8M7 14h10M6 20h12" /></svg>
+             </div>
+             <div className="logo-text-block">
+               <h1 className="logo-entp-title">ENTP</h1>
+               <p className="logo-arabic">المؤسسة الوطنية<br/>لإنجاز الآبار</p>
+               <div className="logo-orange-line"></div>
+               <p className="logo-sonatrach">GROUPE SONATRACH</p>
+             </div>
           </div>
-          <div className="login-bg-logo-text">
-            <h1>ENTP</h1>
-            <span>Entreprise Nationale des Travaux aux Puits</span>
+        </div>
+
+        {/* Textes en bas à gauche */}
+        <div className="login-bottom-content">
+          <h1 className="main-title">
+            ENTREPRISE NATIONALE<br />DES TRAVAUX AUX PUITS
+          </h1>
+          <h2 className="main-subtitle">GROUPE SONATRACH</h2>
+
+          <div className="features-container">
+            <div className="feature-item">
+              <HardHat size={26} className="feature-icon" />
+              <div className="feature-text">
+                <strong>Sécurité</strong>
+                <span>Notre priorité</span>
+              </div>
+            </div>
+            <div className="feature-divider" />
+            <div className="feature-item">
+              <Settings size={26} className="feature-icon" />
+              <div className="feature-text">
+                <strong>Performance</strong>
+                <span>Notre exigence</span>
+              </div>
+            </div>
+            <div className="feature-divider" />
+            <div className="feature-item">
+              <Users size={26} className="feature-icon" />
+              <div className="feature-text">
+                <strong>Engagement</strong>
+                <span>Notre valeur</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -60,7 +100,7 @@ const Login = () => {
           <div className="login-card-header">
             <h2>ENTP</h2>
             <p className="subtitle">
-              Système de transfert de matériel<br />entre services
+              SYSTÈME DE GESTION ET DE TRANSFERT<br />DE MATÉRIEL ENTRE SERVICES
             </p>
           </div>
 
@@ -69,7 +109,6 @@ const Login = () => {
 
           {/* Titre Connexion */}
           <div className="login-section-title">
-            <User size={22} className="icon" />
             <h3>Connexion</h3>
           </div>
 
@@ -89,14 +128,14 @@ const Login = () => {
 >>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
             {/* Email */}
             <div className="form-group">
-              <label htmlFor="login-email">Adresse Email Professionnelle</label>
+              <label htmlFor="login-email">Adresse email professionnelle</label>
               <div className="input-wrapper">
                 <span className="input-icon"><Mail size={18} /></span>
                 <input
                   type="email"
                   id="login-email"
                   name="email"
-                  placeholder="exemple@entp.dz"
+                  placeholder="utilisateur@entp.dz"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -212,8 +251,8 @@ const Login = () => {
 
           {/* Footer */}
           <div className="login-footer">
-            © 2026 <strong>ENTP</strong> — Entreprise Nationale des Travaux aux Puits<br />
-            Tous droits réservés.
+            © 2024 <strong>ENTP</strong> - Entreprise Nationale des Travaux aux Puits<br />
+            Groupe Sonatrach - Tous droits réservés.
           </div>
         </div>
       </div>
