@@ -1,0 +1,107 @@
+/* Charte Graphique ENTP - Gestion de Matériel — Thème Orange */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --primary-color: #e8611a;         /* Orange ENTP principal */
+  --primary-light: #f28c4e;         /* Orange clair */
+  --primary-dark: #c24e10;          /* Orange foncé */
+  --primary-gradient: linear-gradient(135deg, #e8611a 0%, #f28c4e 100%);
+  --secondary-color: #2d3748;       /* Gris-bleu foncé professionnel */
+  --secondary-light: #4a5568;
+  --dark-color: #1a202c;            /* Anthracite sombre */
+  --light-color: #f7f8fa;           /* Gris clair/Gris blanc */
+  --white: #ffffff;
+  --gray-100: #f1f3f5;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e0;
+  --gray-400: #a0aec0;
+  --gray-500: #718096;
+  --gray-600: #4a5568;
+  --gray-700: #2d3748;
+  --danger-color: #e53e3e;          /* Rouge alerte */
+  --success-color: #38a169;         /* Vert succès */
+  --warning-color: #dd6b20;         /* Orange attention */
+  --info-color: #3182ce;            /* Bleu info */
+  --border-radius: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.12);
+  --shadow-xl: 0 20px 50px rgba(0,0,0,0.15);
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--light-color);
+  color: var(--dark-color);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100%;
+}
+
+/* Boutons */
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-family: var(--font-family);
+}
+
+/* Formulaires */
+input, select, textarea {
+  font-family: var(--font-family);
+  outline: none;
+}
+
+/* Animations et Transitions */
+.transition-all {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Classes utilitaires */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+
+/* Style des cartes */
+.card {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+  border: 1px solid var(--gray-200);
+}
+
+/* Scrollbar personnalisée */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--gray-100);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-400);
+}

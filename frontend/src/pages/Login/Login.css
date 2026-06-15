@@ -1,0 +1,483 @@
+/* =============================================
+   LOGIN PAGE — ENTP Thème Orange Premium
+   ============================================= */
+
+/* Conteneur plein écran */
+.login-page {
+  display: flex;
+  min-height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  font-family: var(--font-family);
+}
+
+/* ---- CÔTÉ GAUCHE : Image de fond ---- */
+.login-bg-section {
+  flex: 1.1;
+  position: relative;
+  background-image: url('/images/entp-building.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 100vh;
+}
+
+/* Superposition sombre subtile pour lisibilité */
+.login-bg-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.25) 0%,
+    rgba(0, 0, 0, 0.1) 40%,
+    rgba(232, 97, 26, 0.0) 60%
+  );
+  z-index: 1;
+}
+
+/* Bande diagonale orange en bas de l'image */
+.login-bg-section::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 35%;
+  background: linear-gradient(
+    15deg,
+    rgba(232, 97, 26, 0.85) 0%,
+    rgba(232, 97, 26, 0.4) 50%,
+    transparent 100%
+  );
+  z-index: 2;
+}
+
+/* Logo ENTP dans le coin supérieur gauche sur l'image */
+.login-bg-logo {
+  position: relative;
+  z-index: 3;
+  padding: 2rem 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.login-bg-logo-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(232, 97, 26, 0.9);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 900;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 12px rgba(232, 97, 26, 0.3);
+}
+
+.login-bg-logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-bg-logo-text h1 {
+  color: white;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  line-height: 1.2;
+}
+
+.login-bg-logo-text span {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ---- CÔTÉ DROIT : Carte de connexion ---- */
+.login-card-section {
+  flex: 0.9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--white);
+  padding: 3rem;
+  position: relative;
+  box-shadow: -5px 0 30px rgba(0, 0, 0, 0.08);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+}
+
+/* En-tête de la carte */
+.login-card-header {
+  margin-bottom: 2rem;
+}
+
+.login-card-header h2 {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--dark-color);
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+}
+
+.login-card-header .subtitle {
+  font-size: 0.95rem;
+  color: var(--gray-500);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Barre de séparation orange */
+.login-divider-bar {
+  width: 50px;
+  height: 4px;
+  background: var(--primary-color);
+  border-radius: 2px;
+  margin: 1.5rem 0;
+}
+
+/* Section "Connexion" titre */
+.login-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.8rem;
+}
+
+.login-section-title .icon {
+  color: var(--primary-color);
+}
+
+.login-section-title h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+/* Champs de formulaire stylisés */
+.form-group {
+  margin-bottom: 1.2rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gray-600);
+  margin-bottom: 0.5rem;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper .input-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--gray-400);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 0.85rem 0.9rem 0.85rem 2.8rem;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--border-radius);
+  font-size: 0.92rem;
+  color: var(--dark-color);
+  background: var(--gray-100);
+  transition: all 0.25s ease;
+}
+
+.input-wrapper input:focus {
+  border-color: var(--primary-color);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(232, 97, 26, 0.1);
+}
+
+.input-wrapper input::placeholder {
+  color: var(--gray-400);
+}
+
+/* Bouton toggle mot de passe */
+.password-toggle {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  color: var(--gray-400);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.password-toggle:hover {
+  color: var(--primary-color);
+}
+
+/* Ligne "Se souvenir de moi" + "Mot de passe oublié" */
+.form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  font-size: 0.82rem;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--gray-600);
+  cursor: pointer;
+}
+
+.remember-me input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+
+.forgot-password {
+  color: var(--primary-color);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.forgot-password:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+/* Bouton principal "Se connecter" */
+.btn-login {
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(232, 97, 26, 0.3);
+}
+
+.btn-login:hover:not(:disabled) {
+  background: var(--primary-dark);
+  box-shadow: 0 6px 20px rgba(232, 97, 26, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-login:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-login:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn-login .arrow-icon {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Spinner de chargement */
+.btn-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Erreur */
+.login-error {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: var(--danger-color);
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius);
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: shakeError 0.4s ease;
+}
+
+@keyframes shakeError {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Séparateur "OU" */
+.login-separator {
+  display: flex;
+  align-items: center;
+  margin: 1.8rem 0;
+  gap: 1rem;
+}
+
+.login-separator::before,
+.login-separator::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--gray-200);
+}
+
+.login-separator span {
+  font-size: 0.8rem;
+  color: var(--gray-400);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Boutons de connexion rapide */
+.quick-login-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.btn-quick-login {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  background: var(--white);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-quick-login:hover {
+  border-color: var(--primary-color);
+  background: rgba(232, 97, 26, 0.04);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(232, 97, 26, 0.1);
+}
+
+.btn-quick-login .quick-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.btn-quick-login.admin .quick-icon {
+  background: rgba(232, 97, 26, 0.1);
+  color: var(--primary-color);
+}
+
+.btn-quick-login.resp .quick-icon {
+  background: rgba(49, 130, 206, 0.1);
+  color: var(--info-color);
+}
+
+.btn-quick-login .quick-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.btn-quick-login .quick-text strong {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--dark-color);
+}
+
+.btn-quick-login .quick-text span {
+  font-size: 0.7rem;
+  color: var(--gray-400);
+  font-weight: 400;
+}
+
+/* Footer */
+.login-footer {
+  margin-top: 2.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  line-height: 1.6;
+}
+
+.login-footer strong {
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .login-page {
+    flex-direction: column;
+  }
+  .login-bg-section {
+    flex: none;
+    min-height: 220px;
+    max-height: 280px;
+  }
+  .login-card-section {
+    flex: 1;
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .login-card-section {
+    padding: 1.5rem 1rem;
+  }
+  .login-card-header h2 {
+    font-size: 1.6rem;
+  }
+  .quick-login-grid {
+    grid-template-columns: 1fr;
+  }
+}

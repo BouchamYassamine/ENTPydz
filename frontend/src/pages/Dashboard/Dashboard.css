@@ -1,0 +1,76 @@
+.dashboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+}
+
+.dashboard-header-title h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  margin-bottom: 0.25rem;
+}
+
+.dashboard-header-title p {
+  color: var(--gray-500);
+  font-size: 0.95rem;
+}
+
+/* Grille de statistiques */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  background-color: var(--white);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-info h3 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--dark-color);
+}
+
+.stat-info p {
+  font-size: 0.85rem;
+  color: var(--gray-400);
+  font-weight: 500;
+}
+
+/* Contenu des dashboards */
+.dashboard-content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.dashboard-content-grid h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--dark-color);
+}
