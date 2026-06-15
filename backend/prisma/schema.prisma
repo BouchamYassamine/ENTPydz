@@ -1,0 +1,57 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("Consultant")
+  service   String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  requests  Transfer[] @relation("RequestedTransfers")
+  approvals Transfer[] @relation("ApprovedTransfers")
+}
+
+model Material {
+  id             Int      @id @default(autoincrement())
+  barcode        String   @unique
+  name           String
+  description    String?  @db.Text
+  currentService String
+  status         String   @default("Disponible")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  transfers      Transfer[]
+}
+
+model Transfer {
+  id                 Int       @id @default(autoincrement())
+  sourceService      String
+  destinationService String
+  status             String    @default("En attente")
+  comments           String?   @db.Text
+  requestedAt        DateTime  @default(now())
+  processedAt        DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  materialId         Int
+  material           Material  @relation(fields: [materialId], references: [id])
+
+  requesterId        Int
+  requester          User      @relation("RequestedTransfers", fields: [requesterId], references: [id])
+
+  approverId         Int?
+  approver           User?     @relation("ApprovedTransfers", fields: [approverId], references: [id])
+}
