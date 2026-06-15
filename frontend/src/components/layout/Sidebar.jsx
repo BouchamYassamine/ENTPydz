@@ -60,7 +60,11 @@ const Sidebar = () => {
         )}
 
         {/* Dashboard spécifique Administrateur */}
+<<<<<<< HEAD
         {isRole(['Admin', 'ADMIN']) && (
+=======
+        {isRole(['Admin']) && (
+>>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
           <NavLink 
             to="/admin/dashboard"
             style={({ isActive }) => navItemStyle(isActive)}
@@ -81,7 +85,11 @@ const Sidebar = () => {
         </NavLink>
 
         {/* Faire une demande de transfert (Admin & Responsable) */}
+<<<<<<< HEAD
         {isRole(['Admin', 'ADMIN', 'Responsable Service']) && (
+=======
+        {isRole(['Admin', 'Responsable Service']) && (
+>>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
           <NavLink 
             to="/transfers/new"
             style={({ isActive }) => navItemStyle(isActive)}
@@ -92,7 +100,11 @@ const Sidebar = () => {
         )}
 
         {/* Gestion des utilisateurs (Admin uniquement) */}
+<<<<<<< HEAD
         {isRole(['Admin', 'ADMIN']) && (
+=======
+        {isRole(['Admin']) && (
+>>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
           <div style={{ marginTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1.5rem' }}>
             <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', color: 'var(--gray-400)', paddingLeft: '1rem', display: 'block', marginBottom: '0.5rem', letterSpacing: '1px' }}>
               Administration

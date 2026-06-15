@@ -82,7 +82,11 @@ const Login = () => {
           )}
 
           {/* Formulaire */}
+<<<<<<< HEAD
           <form onSubmit={handleSubmit} autoComplete="off">
+=======
+          <form onSubmit={handleSubmit}>
+>>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
             {/* Email */}
             <div className="form-group">
               <label htmlFor="login-email">Adresse Email Professionnelle</label>
@@ -96,7 +100,11 @@ const Login = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+<<<<<<< HEAD
                   autoComplete="off"
+=======
+                  autoComplete="email"
+>>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
                 />
               </div>
             </div>
@@ -114,7 +122,11 @@ const Login = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+<<<<<<< HEAD
                   autoComplete="new-password"
+=======
+                  autoComplete="current-password"
+>>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
                 />
                 <button
                   type="button"

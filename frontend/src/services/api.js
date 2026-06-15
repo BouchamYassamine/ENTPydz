@@ -1,4 +1,5 @@
 import axios from 'axios';
+<<<<<<< HEAD
 
 // Instance Axios configurée
 const apiClient = axios.create({
@@ -92,3 +93,30 @@ export const UserApi = {
 };
 
 export default apiClient;
+=======
+import config from '../config.js';
+
+// Création d'une instance Axios configurée
+const api = axios.create({
+  baseURL: config.apiUrl,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Intercepteur pour injecter automatiquement le jeton d'authentification (Bearer JWT)
+api.interceptors.request.use(
+  (reqConfig) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      reqConfig.headers.Authorization = `Bearer ${token}`;
+    }
+    return reqConfig;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+export default api;
+>>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d

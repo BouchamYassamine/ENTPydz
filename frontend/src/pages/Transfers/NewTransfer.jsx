@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth.js';
 import Input from '../../components/common/Input.jsx';
 import Button from '../../components/common/Button.jsx';
+<<<<<<< HEAD
 import MaterialSelector from '../../components/MaterialSelector.jsx';
+=======
+>>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
 import { ArrowLeft, Send } from 'lucide-react';
 
 const NewTransfer = () => {
@@ -12,7 +15,11 @@ const NewTransfer = () => {
 
   const [formData, setFormData] = useState({
     materialBarcode: '',
+<<<<<<< HEAD
     selectedMaterials: [],
+=======
+    materialName: '',
+>>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
     destinationService: '',
     reason: ''
   });
@@ -95,10 +102,21 @@ const NewTransfer = () => {
           required
         />
 
+<<<<<<< HEAD
         {/* Désignation du matériel (Multi-select) */}
         <MaterialSelector 
           selectedMaterials={formData.selectedMaterials}
           onChange={(newSelection) => setFormData({ ...formData, selectedMaterials: newSelection })}
+=======
+        {/* Désignation du matériel */}
+        <Input 
+          label="Désignation précise du matériel"
+          name="materialName"
+          placeholder="Ex: Tiges de forage, Compresseur de chantier, Pompe..."
+          value={formData.materialName}
+          onChange={handleChange}
+          required
+>>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
         />
 
         {/* Service Récepteur */}

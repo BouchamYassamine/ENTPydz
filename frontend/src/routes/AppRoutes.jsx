@@ -3,7 +3,10 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import Login from '../pages/Login/Login.jsx';
 import AdminDashboard from '../pages/Dashboard/AdminDashboard.jsx';
+<<<<<<< HEAD
 import Users from '../pages/Admin/Users.jsx';
+=======
+>>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
 import ManagerDashboard from '../pages/Dashboard/ManagerDashboard.jsx';
 import TransferList from '../pages/Transfers/TransferList.jsx';
 import TransferDetail from '../pages/Transfers/TransferDetail.jsx';
@@ -44,6 +47,7 @@ const AppRoutes = () => {
           } 
         />
 
+<<<<<<< HEAD
         {/* Gestion des utilisateurs (uniquement Admin) */}
         <Route 
           path="/admin/users" 
@@ -54,6 +58,8 @@ const AppRoutes = () => {
           } 
         />
 
+=======
+>>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
         {/* Création de transferts (uniquement Admin et Responsables) */}
         <Route 
           path="/transfers/new" 
