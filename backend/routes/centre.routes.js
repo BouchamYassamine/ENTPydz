@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getCentres, getCentreById, createCentre, updateCentre, deleteCentre } from '../controllers/centre.controller.js';
+import { getCentres, getCentreById, createCentre, updateCentre, deleteCentre, getCentreLieux } from '../controllers/centre.controller.js';
 import { protect, checkAdmin } from '../middlewares/auth.middleware.js';
 
 const router = Router();
@@ -11,6 +11,7 @@ router.use(protect);
 // (nécessaire pour afficher la liste des centres destination dans le formulaire)
 router.get('/', getCentres);
 router.get('/:id', getCentreById);
+router.get('/:id/lieux', getCentreLieux);
 
 // POST / PUT / DELETE : réservé aux admins
 router.post('/', checkAdmin, createCentre);

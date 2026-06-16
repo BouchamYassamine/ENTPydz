@@ -14,7 +14,7 @@ export const getMaterials = async (req, res, next) => {
     if (role === 'Admin Centre' || role === 'Utilisateur') {
       where.centreId = userCentreId;
     } else {
-      if (categorieId) where.categoryId = parseInt(categorieId);
+      if (categorieId) where.categorie = categorieId; // `categorieId` now holds the string name
       if (centreId) where.centreId = parseInt(centreId);
     }
     if (statut) where.status = statut;
@@ -28,7 +28,6 @@ export const getMaterials = async (req, res, next) => {
     const materials = await prisma.material.findMany({
       where,
       include: {
-        category: { select: { id: true, nom: true } },
         centre: { select: { id: true, nom: true, ville: true } }
       },
       orderBy: { createdAt: 'desc' }
@@ -47,7 +46,6 @@ export const getMaterialById = async (req, res, next) => {
     const material = await prisma.material.findUnique({
       where: { id: parseInt(req.params.id) },
       include: {
-        category: { select: { id: true, nom: true } },
         centre: { select: { id: true, nom: true, ville: true } },
         transfers: {
           include: {
@@ -76,37 +74,45 @@ export const createMaterial = async (req, res, next) => {
       return res.status(403).json({ success: false, message: 'Non autorisé : seuls les administrateurs peuvent ajouter des matériels' });
     }
 
-    const { codeBarre, designation, categorieId, centreId, statut } = req.body;
+    const { 
+      barcode, codeInventaire, name, description, categorie, sousCategorie, 
+      marque, modele, numeroSerie, anneeService, valeurEstimee, 
+      etatGeneral, photo, status, centreId, lieuId 
+    } = req.body;
 
-    if (!codeBarre || !designation) {
-      return res.status(400).json({ success: false, message: 'Le code barre et la désignation sont requis' });
+    if (!barcode || !codeInventaire || !name || !categorie || !centreId || !etatGeneral || !status) {
+      return res.status(400).json({ success: false, message: 'Tous les champs obligatoires doivent être remplis' });
     }
 
     // Admin Centre ne peut créer qu'un matériel pour SON centre
-    const targetCentreId = role === 'Admin Centre' ? userCentreId : (centreId ? parseInt(centreId) : null);
+    const targetCentreId = role === 'Admin Centre' ? userCentreId : parseInt(centreId);
 
-    const existing = await prisma.material.findUnique({ where: { barcode: codeBarre } });
-    if (existing) {
-      return res.status(409).json({ success: false, message: 'Un matériel avec ce code barre existe déjà' });
-    }
+    const dupBarcode = await prisma.material.findUnique({ where: { barcode } });
+    if (dupBarcode) return res.status(409).json({ success: false, message: 'Ce code barre existe déjà' });
 
-    let currentService = '';
-    if (targetCentreId) {
-      const centre = await prisma.centre.findUnique({ where: { id: targetCentreId } });
-      if (centre) currentService = centre.nom;
-    }
+    const dupInv = await prisma.material.findUnique({ where: { codeInventaire } });
+    if (dupInv) return res.status(409).json({ success: false, message: 'Ce code inventaire existe déjà' });
 
     const material = await prisma.material.create({
       data: {
-        barcode: codeBarre,
-        name: designation,
-        currentService,
-        status: statut || 'Disponible',
-        categoryId: categorieId ? parseInt(categorieId) : null,
-        centreId: targetCentreId
+        barcode,
+        codeInventaire,
+        name,
+        description,
+        categorie,
+        sousCategorie,
+        marque,
+        modele,
+        numeroSerie,
+        anneeService: anneeService ? parseInt(anneeService) : null,
+        valeurEstimee: valeurEstimee ? parseFloat(valeurEstimee) : null,
+        etatGeneral,
+        photo,
+        status,
+        centreId: targetCentreId,
+        lieuId: lieuId ? parseInt(lieuId) : null
       },
       include: {
-        category: { select: { id: true, nom: true } },
         centre: { select: { id: true, nom: true } }
       }
     });
@@ -123,12 +129,16 @@ export const updateMaterial = async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
     const { role, centreId: userCentreId } = req.user;
-    const { codeBarre, designation, categorieId, centreId, statut } = req.body;
+    
+    const { 
+      barcode, codeInventaire, name, description, categorie, sousCategorie, 
+      marque, modele, numeroSerie, anneeService, valeurEstimee, 
+      etatGeneral, photo, status, centreId, lieuId 
+    } = req.body;
 
     const existing = await prisma.material.findUnique({ where: { id } });
     if (!existing) return res.status(404).json({ success: false, message: 'Matériel introuvable' });
 
-    // Admin Centre ne peut modifier que les matériels de SON centre
     if (role === 'Admin Centre' && existing.centreId !== userCentreId) {
       return res.status(403).json({ success: false, message: 'Vous ne pouvez modifier que les matériels de votre centre' });
     }
@@ -136,30 +146,39 @@ export const updateMaterial = async (req, res, next) => {
       return res.status(403).json({ success: false, message: 'Non autorisé' });
     }
 
-    if (codeBarre && codeBarre !== existing.barcode) {
-      const dup = await prisma.material.findUnique({ where: { barcode: codeBarre } });
+    if (barcode && barcode !== existing.barcode) {
+      const dup = await prisma.material.findUnique({ where: { barcode } });
       if (dup) return res.status(409).json({ success: false, message: 'Ce code barre est déjà utilisé' });
     }
 
-    const updateData = {};
-    if (codeBarre) updateData.barcode = codeBarre;
-    if (designation) updateData.name = designation;
-    if (statut) updateData.status = statut;
-    if (categorieId !== undefined) updateData.categoryId = categorieId ? parseInt(categorieId) : null;
-    // Admin Centre ne peut pas changer le centreId (matériel resté dans son centre)
-    if (centreId !== undefined && role === 'Admin') {
-      updateData.centreId = centreId ? parseInt(centreId) : null;
-      if (centreId) {
-        const centre = await prisma.centre.findUnique({ where: { id: parseInt(centreId) } });
-        if (centre) updateData.currentService = centre.nom;
-      }
+    if (codeInventaire && codeInventaire !== existing.codeInventaire) {
+      const dup = await prisma.material.findUnique({ where: { codeInventaire } });
+      if (dup) return res.status(409).json({ success: false, message: 'Ce code inventaire est déjà utilisé' });
     }
+
+    const targetCentreId = (centreId !== undefined && role === 'Admin') ? parseInt(centreId) : existing.centreId;
 
     const material = await prisma.material.update({
       where: { id },
-      data: updateData,
+      data: {
+        ...(barcode && { barcode }),
+        ...(codeInventaire && { codeInventaire }),
+        ...(name && { name }),
+        ...(description !== undefined && { description }),
+        ...(categorie && { categorie }),
+        ...(sousCategorie !== undefined && { sousCategorie }),
+        ...(marque !== undefined && { marque }),
+        ...(modele !== undefined && { modele }),
+        ...(numeroSerie !== undefined && { numeroSerie }),
+        ...(anneeService !== undefined && { anneeService: anneeService ? parseInt(anneeService) : null }),
+        ...(valeurEstimee !== undefined && { valeurEstimee: valeurEstimee ? parseFloat(valeurEstimee) : null }),
+        ...(etatGeneral && { etatGeneral }),
+        ...(photo !== undefined && { photo }),
+        ...(status && { status }),
+        centreId: targetCentreId,
+        ...(lieuId !== undefined && { lieuId: lieuId ? parseInt(lieuId) : null })
+      },
       include: {
-        category: { select: { id: true, nom: true } },
         centre: { select: { id: true, nom: true } }
       }
     });
@@ -204,5 +223,31 @@ export const deleteMaterial = async (req, res, next) => {
     await prisma.material.delete({ where: { id } });
 
     return res.status(200).json({ success: true, message: 'Matériel supprimé avec succès' });
+  } catch (error) { next(error); }
+};
+
+/**
+ * @desc    Vérifier la disponibilité d'un code barre
+ * @route   GET /api/materiels/check-barcode?code=X
+ */
+export const checkBarcode = async (req, res, next) => {
+  try {
+    const { code } = req.query;
+    if (!code) return res.status(400).json({ success: false, message: 'Code barre requis' });
+    const existing = await prisma.material.findUnique({ where: { barcode: code } });
+    return res.status(200).json({ success: true, available: !existing });
+  } catch (error) { next(error); }
+};
+
+/**
+ * @desc    Vérifier la disponibilité d'un code inventaire
+ * @route   GET /api/materiels/check-inventaire?code=X
+ */
+export const checkInventaire = async (req, res, next) => {
+  try {
+    const { code } = req.query;
+    if (!code) return res.status(400).json({ success: false, message: 'Code inventaire requis' });
+    const existing = await prisma.material.findUnique({ where: { codeInventaire: code } });
+    return res.status(200).json({ success: true, available: !existing });
   } catch (error) { next(error); }
 };

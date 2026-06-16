@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MaterielApi, CategorieApi, CentreApi } from '../../services/api.js';
 import { Trash2, Edit, Plus, X, Search, Package, Tag, History } from 'lucide-react';
+import NouveauMaterielModal from '../../components/admin/NouveauMaterielModal.jsx';
 
 const iS = { width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem', boxSizing: 'border-box' };
 const lS = { display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: '600', color: '#475569' };
@@ -23,7 +24,7 @@ const Materiels = () => {
   const [catName, setCatName] = useState('');
   const [msg, setMsg] = useState({ text: '', type: '' });
   const [filters, setFilters] = useState({ search: '', categorieId: '', centreId: '', statut: '' });
-  const [form, setForm] = useState({ codeBarre: '', designation: '', categorieId: '', centreId: '', statut: 'Disponible' });
+  const [editingMat, setEditingMat] = useState(null);
 
   useEffect(() => { load(); }, []);
 
@@ -55,13 +56,7 @@ const Materiels = () => {
   useEffect(() => { fetchMateriels(); }, [filters]);
 
   const openMatModal = (m = null) => {
-    if (m) {
-      setEditingId(m.id);
-      setForm({ codeBarre: m.barcode, designation: m.name, categorieId: m.categoryId || '', centreId: m.centreId || '', statut: m.status });
-    } else {
-      setEditingId(null);
-      setForm({ codeBarre: '', designation: '', categorieId: '', centreId: '', statut: 'Disponible' });
-    }
+    setEditingMat(m);
     setShowModal(true);
   };
 
@@ -71,18 +66,10 @@ const Materiels = () => {
     setShowCatModal(true);
   };
 
-  const handleMatSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (editingId) {
-        await MaterielApi.updateMateriel(editingId, form);
-        showMsg("Matériel modifié", "success");
-      } else {
-        await MaterielApi.createMateriel(form);
-        showMsg("Matériel créé", "success");
-      }
-      setShowModal(false); fetchMateriels();
-    } catch (err) { showMsg(err.response?.data?.message || "Erreur", "error"); }
+  const handleMatSuccess = () => {
+    setShowModal(false);
+    fetchMateriels();
+    showMsg("Opération réussie", "success");
   };
 
   const handleCatSubmit = async (e) => {
@@ -149,7 +136,7 @@ const Materiels = () => {
             </div>
             <select value={filters.categorieId} onChange={e => setFilters({...filters, categorieId: e.target.value})} style={{ ...iS, flex:'0 1 180px' }}>
               <option value="">Toutes catégories</option>
-              {categories.map(c => <option key={c.id} value={c.id}>{c.nom}</option>)}
+              {categories.map(c => <option key={c.id} value={c.nom}>{c.nom}</option>)}
             </select>
             <select value={filters.centreId} onChange={e => setFilters({...filters, centreId: e.target.value})} style={{ ...iS, flex:'0 1 180px' }}>
               <option value="">Tous centres</option>
@@ -176,7 +163,7 @@ const Materiels = () => {
                   <tr key={m.id} style={{ borderBottom:'1px solid #f1f5f9' }}>
                     <td style={{ padding:'1rem 1.2rem', fontFamily:'monospace', color:'#64748b', fontSize:'0.9rem' }}>{m.barcode}</td>
                     <td style={{ padding:'1rem 1.2rem', fontWeight:'500', color:'#1e293b' }}>{m.name}</td>
-                    <td style={{ padding:'1rem 1.2rem', color:'#64748b' }}>{m.category?.nom || '-'}</td>
+                    <td style={{ padding:'1rem 1.2rem', color:'#64748b' }}>{m.categorie || '-'}</td>
                     <td style={{ padding:'1rem 1.2rem', color:'#64748b' }}>{m.centre?.nom || m.currentService || '-'}</td>
                     <td style={{ padding:'1rem 1.2rem' }}><Badge status={m.status} /></td>
                     <td style={{ padding:'1rem 1.2rem' }}>
@@ -228,51 +215,11 @@ const Materiels = () => {
 
       {/* Modal Matériel */}
       {showModal && (
-        <div style={{ position:'fixed', inset:0, backgroundColor:'rgba(15,23,42,0.75)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:1000 }}>
-          <div style={{ backgroundColor:'#fff', borderRadius:'12px', width:'100%', maxWidth:'520px', overflow:'hidden' }}>
-            <div style={{ padding:'1.5rem 2rem', borderBottom:'1px solid #e2e8f0', display:'flex', justifyContent:'space-between', alignItems:'center', backgroundColor:'#f8fafc' }}>
-              <h2 style={{ margin:0, fontSize:'1.2rem', fontWeight:'700' }}>{editingId ? 'Modifier' : 'Nouveau matériel'}</h2>
-              <button onClick={() => setShowModal(false)} style={{ background:'none', border:'none', color:'#64748b', cursor:'pointer' }}><X size={20}/></button>
-            </div>
-            <form onSubmit={handleMatSubmit} style={{ padding:'2rem' }}>
-              <div style={{ marginBottom:'1.2rem' }}>
-                <label style={lS}>Code Barre <span style={{color:'#ef4444'}}>*</span></label>
-                <input required value={form.codeBarre} onChange={e => setForm({...form, codeBarre: e.target.value})} style={iS} placeholder="ENTP-EQP-XXXXXX" />
-              </div>
-              <div style={{ marginBottom:'1.2rem' }}>
-                <label style={lS}>Désignation <span style={{color:'#ef4444'}}>*</span></label>
-                <input required value={form.designation} onChange={e => setForm({...form, designation: e.target.value})} style={iS} placeholder="Ex: Compresseur Atlas Copco" />
-              </div>
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1rem', marginBottom:'1.2rem' }}>
-                <div>
-                  <label style={lS}>Catégorie</label>
-                  <select value={form.categorieId} onChange={e => setForm({...form, categorieId: e.target.value})} style={{...iS, backgroundColor:'#fff'}}>
-                    <option value="">Aucune</option>
-                    {categories.map(c => <option key={c.id} value={c.id}>{c.nom}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label style={lS}>Centre</label>
-                  <select value={form.centreId} onChange={e => setForm({...form, centreId: e.target.value})} style={{...iS, backgroundColor:'#fff'}}>
-                    <option value="">Aucun</option>
-                    {centres.map(c => <option key={c.id} value={c.id}>{c.nom}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div style={{ marginBottom:'1.5rem' }}>
-                <label style={lS}>Statut</label>
-                <select value={form.statut} onChange={e => setForm({...form, statut: e.target.value})} style={{...iS, backgroundColor:'#fff'}}>
-                  <option value="Disponible">Disponible</option>
-                  <option value="En Transfert">En Transfert</option>
-                </select>
-              </div>
-              <div style={{ display:'flex', justifyContent:'flex-end', gap:'1rem', borderTop:'1px solid #e2e8f0', paddingTop:'1.5rem' }}>
-                <button type="button" onClick={() => setShowModal(false)} style={{ padding:'0.6rem 1.5rem', borderRadius:'8px', border:'1px solid #cbd5e1', background:'#fff', color:'#475569', fontWeight:'600', cursor:'pointer' }}>Annuler</button>
-                <button type="submit" style={{ padding:'0.6rem 1.5rem', borderRadius:'8px', border:'none', backgroundColor:'#FF6B35', color:'#fff', fontWeight:'600', cursor:'pointer' }}>{editingId ? 'Mettre à jour' : 'Enregistrer'}</button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <NouveauMaterielModal 
+          onClose={() => setShowModal(false)}
+          onSuccess={handleMatSuccess}
+          initialData={editingMat}
+        />
       )}
 
       {/* Modal Catégorie */}

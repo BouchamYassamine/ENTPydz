@@ -31,7 +31,7 @@ export const getCentreById = async (req, res, next) => {
       where: { id: parseInt(req.params.id) },
       include: {
         users: { select: { id: true, name: true, email: true, role: true, service: true, isActive: true } },
-        materiels: { select: { id: true, barcode: true, name: true, status: true, currentService: true } },
+        materiels: { select: { id: true, barcode: true, name: true, status: true, categorie: true } },
         _count: { select: { users: true, materiels: true } }
       }
     });
@@ -144,5 +144,19 @@ export const deleteCentre = async (req, res, next) => {
     // Supprimer le centre
     await prisma.centre.delete({ where: { id } });
     return res.status(200).json({ success: true, message: 'Centre supprimé avec succès' });
+  } catch (error) { next(error); }
+};
+
+/**
+ * @desc    Obtenir les lieux d'un centre
+ * @route   GET /api/centres/:id/lieux
+ */
+export const getCentreLieux = async (req, res, next) => {
+  try {
+    const lieux = await prisma.lieu.findMany({
+      where: { centreId: parseInt(req.params.id) },
+      orderBy: { nom: 'asc' }
+    });
+    return res.status(200).json({ success: true, data: lieux });
   } catch (error) { next(error); }
 };

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getMaterials, getMaterialById, createMaterial, updateMaterial, deleteMaterial } from '../controllers/material.controller.js';
+import { getMaterials, getMaterialById, createMaterial, updateMaterial, deleteMaterial, checkBarcode, checkInventaire } from '../controllers/material.controller.js';
 import { protect, checkAdmin } from '../middlewares/auth.middleware.js';
 
 const router = Router();
@@ -8,6 +8,9 @@ const router = Router();
 router.use(protect);
 
 // GET : accessible à tous les utilisateurs authentifiés
+router.get('/check-barcode', checkAdmin, checkBarcode);
+router.get('/check-inventaire', checkAdmin, checkInventaire);
+
 router.get('/', getMaterials);
 router.get('/:id', getMaterialById);
 

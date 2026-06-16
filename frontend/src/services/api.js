@@ -37,7 +37,8 @@ export const CentreApi = {
   getCentreById: async (id) => { const r = await apiClient.get(`/centres/${id}`); return r.data; },
   createCentre: async (data) => { const r = await apiClient.post('/centres', data); return r.data; },
   updateCentre: async (id, data) => { const r = await apiClient.put(`/centres/${id}`, data); return r.data; },
-  deleteCentre: async (id) => { const r = await apiClient.delete(`/centres/${id}`); return r.data; }
+  deleteCentre: async (id) => { const r = await apiClient.delete(`/centres/${id}`); return r.data; },
+  getCentreLieux: async (id) => { const r = await apiClient.get(`/centres/${id}/lieux`); return r.data; }
 };
 
 export const MaterielApi = {
@@ -45,7 +46,9 @@ export const MaterielApi = {
   getMaterielById: async (id) => { const r = await apiClient.get(`/materials/${id}`); return r.data; },
   createMateriel: async (data) => { const r = await apiClient.post('/materials', data); return r.data; },
   updateMateriel: async (id, data) => { const r = await apiClient.put(`/materials/${id}`, data); return r.data; },
-  deleteMateriel: async (id) => { const r = await apiClient.delete(`/materials/${id}`); return r.data; }
+  deleteMateriel: async (id) => { const r = await apiClient.delete(`/materials/${id}`); return r.data; },
+  checkBarcode: async (code) => { const r = await apiClient.get(`/materials/check-barcode?code=${code}`); return r.data; },
+  checkInventaire: async (code) => { const r = await apiClient.get(`/materials/check-inventaire?code=${code}`); return r.data; }
 };
 
 export const CategorieApi = {
