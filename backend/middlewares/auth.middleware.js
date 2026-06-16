@@ -30,6 +30,19 @@ export const protect = (req, res, next) => {
 };
 
 /**
+ * Middleware pour vérifier si l'utilisateur est Admin
+ */
+export const checkAdmin = (req, res, next) => {
+  if (!req.user || (req.user.role !== 'Admin' && req.user.role !== 'ADMIN')) {
+    return res.status(403).json({
+      success: false,
+      message: 'Accès interdit : rôle Administrateur requis'
+    });
+  }
+  next();
+};
+
+/**
  * Middleware pour limiter l'accès à certains rôles
  * @param {...string} roles - Liste des rôles autorisés (ex: 'Admin', 'Responsable Service')
  */

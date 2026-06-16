@@ -1,29 +1,29 @@
 import { Router } from 'express';
-import { getTransfers, createTransfer, updateTransferStatus } from '../controllers/transfer.controller.js';
-<<<<<<< HEAD
+import { 
+  getTransfers, 
+  getTransfertsEnvoyes, 
+  getTransfertsRecus, 
+  createTransfer, 
+  validateTransfer, 
+  receiveTransfer,
+  getPendingCount
+} from '../controllers/transfer.controller.js';
 import { protect } from '../middlewares/auth.middleware.js';
-=======
-import { protect, authorize } from '../middlewares/auth.middleware.js';
->>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
 
 const router = Router();
 
-// Toutes les routes de transfert exigent d'être connecté
 router.use(protect);
 
+router.get('/pending-count', getPendingCount);
+
 router.route('/')
-<<<<<<< HEAD
-  .get(getTransfers) // Filtré par service/rôle dans le contrôleur
-  .post(createTransfer); // Contrôlé par le service source dans le contrôleur
+  .get(getTransfers)
+  .post(createTransfer);
 
-router.route('/:id/status')
-  .put(updateTransferStatus); // Validation/Réception gérée dans le contrôleur
-=======
-  .get(getTransfers) // Accessible par tout utilisateur connecté (filtré par service)
-  .post(authorize('Admin', 'Responsable Service'), createTransfer); // Seuls admins/responsables émettent
+router.get('/envoyes/:centreId', getTransfertsEnvoyes);
+router.get('/recus/:centreId', getTransfertsRecus);
 
-router.route('/:id/status')
-  .put(authorize('Admin', 'Responsable Service'), updateTransferStatus); // Validation des transferts
->>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
+router.patch('/:id/validate', validateTransfer);
+router.patch('/:id/receive', receiveTransfer);
 
 export default router;

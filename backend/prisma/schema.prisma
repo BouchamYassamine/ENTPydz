@@ -1,57 +1,140 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./entp_dev.sqlite"
 }
 
 generator client {
   provider = "prisma-client-js"
 }
 
-model User {
+model Direction {
+  id       Int      @id @default(autoincrement())
+  code     String   @unique
+  nom      String
+  branche  String
+  
+  centres  Centre[]
+  users    User[]
+}
+
+model Centre {
+  id          Int       @id @default(autoincrement())
+  code        String    @unique
+  nom         String
+  ville       String
+  wilaya      String
+  adresse     String?
+  
+  directionId Int
+  direction   Direction @relation(fields: [directionId], references: [id])
+  
+  lieux       Lieu[]
+  users       User[]
+  materiels   Material[]
+
+  sourceTransfers      Transfer[] @relation("SourceCentre")
+  destinationTransfers Transfer[] @relation("DestinationCentre")
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Lieu {
+  id        Int        @id @default(autoincrement())
+  nom       String
+  type      String
+  
+  centreId  Int
+  centre    Centre     @relation(fields: [centreId], references: [id])
+  
+  materiels Material[]
+  
+  // Relations inverses pour les transferts
+  sourceTransfers      Transfer[] @relation("SourceLieu")
+  destinationTransfers Transfer[] @relation("DestinationLieu")
+}
+
+model Category {
   id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  role      String   @default("Consultant")
-  service   String
-  isActive  Boolean  @default(true)
+  nom       String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  requests  Transfer[] @relation("RequestedTransfers")
-  approvals Transfer[] @relation("ApprovedTransfers")
+  materials Material[]
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String   @unique
+  password    String
+  role        String   @default("Consultant")
+  service     String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  directionId Int?
+  direction   Direction? @relation(fields: [directionId], references: [id])
+
+  centreId    Int?
+  centre      Centre?    @relation(fields: [centreId], references: [id])
+
+  requests    Transfer[] @relation("RequestedTransfers")
+  approvals   Transfer[] @relation("ApprovedTransfers")
 }
 
 model Material {
   id             Int      @id @default(autoincrement())
   barcode        String   @unique
   name           String
-  description    String?  @db.Text
+  description    String?
   currentService String
   status         String   @default("Disponible")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  categoryId     Int?
+  category       Category? @relation(fields: [categoryId], references: [id])
+
+  centreId       Int?
+  centre         Centre?   @relation(fields: [centreId], references: [id])
+  
+  lieuId         Int?
+  lieu           Lieu?     @relation(fields: [lieuId], references: [id])
+
   transfers      Transfer[]
 }
 
 model Transfer {
-  id                 Int       @id @default(autoincrement())
-  sourceService      String
-  destinationService String
-  status             String    @default("En attente")
-  comments           String?   @db.Text
-  requestedAt        DateTime  @default(now())
-  processedAt        DateTime?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  id                  Int       @id @default(autoincrement())
+  
+  sourceCentreId      Int
+  sourceCentre        Centre    @relation("SourceCentre", fields: [sourceCentreId], references: [id])
+  
+  destinationCentreId Int
+  destinationCentre   Centre    @relation("DestinationCentre", fields: [destinationCentreId], references: [id])
 
-  materialId         Int
-  material           Material  @relation(fields: [materialId], references: [id])
+  sourceLieuId        Int?
+  sourceLieu          Lieu?     @relation("SourceLieu", fields: [sourceLieuId], references: [id])
 
-  requesterId        Int
-  requester          User      @relation("RequestedTransfers", fields: [requesterId], references: [id])
+  destinationLieuId   Int?
+  destinationLieu     Lieu?     @relation("DestinationLieu", fields: [destinationLieuId], references: [id])
 
-  approverId         Int?
-  approver           User?     @relation("ApprovedTransfers", fields: [approverId], references: [id])
+  status              String    @default("En attente")
+  urgency             String    @default("Normal")
+  comments            String?
+  requestedAt         DateTime  @default(now())
+  processedAt         DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  materialId          Int
+  material            Material  @relation(fields: [materialId], references: [id])
+
+  requesterId         Int
+  requester           User      @relation("RequestedTransfers", fields: [requesterId], references: [id])
+
+  approverId          Int?
+  approver            User?     @relation("ApprovedTransfers", fields: [approverId], references: [id])
 }

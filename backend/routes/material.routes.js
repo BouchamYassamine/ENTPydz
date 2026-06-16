@@ -1,17 +1,19 @@
 import { Router } from 'express';
-import { getMaterials, createMaterial, updateMaterial, deleteMaterial } from '../controllers/material.controller.js';
-import { protect, authorize } from '../middlewares/auth.middleware.js';
+import { getMaterials, getMaterialById, createMaterial, updateMaterial, deleteMaterial } from '../controllers/material.controller.js';
+import { protect, checkAdmin } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
 router.use(protect);
+router.use(checkAdmin);
 
 router.route('/')
   .get(getMaterials)
-  .post(authorize('Admin'), createMaterial);
+  .post(createMaterial);
 
 router.route('/:id')
-  .put(authorize('Admin'), updateMaterial)
-  .delete(authorize('Admin'), deleteMaterial);
+  .get(getMaterialById)
+  .put(updateMaterial)
+  .delete(deleteMaterial);
 
 export default router;

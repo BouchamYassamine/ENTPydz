@@ -28,9 +28,12 @@ const Login = () => {
     if (role === 'admin') {
       setEmail('admin@entp.dz');
       setPassword('admin123');
-    } else {
-      setEmail('responsable.forage@entp.dz');
+    } else if (role === 'resp') {
+      setEmail('responsable@entp.dz');
       setPassword('resp123');
+    } else if (role === 'agent') {
+      setEmail('agent@entp.dz');
+      setPassword('agent123');
     }
   };
 
@@ -121,11 +124,7 @@ const Login = () => {
           )}
 
           {/* Formulaire */}
-<<<<<<< HEAD
           <form onSubmit={handleSubmit} autoComplete="off">
-=======
-          <form onSubmit={handleSubmit}>
->>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
             {/* Email */}
             <div className="form-group">
               <label htmlFor="login-email">Adresse email professionnelle</label>
@@ -139,11 +138,7 @@ const Login = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-<<<<<<< HEAD
                   autoComplete="off"
-=======
-                  autoComplete="email"
->>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
                 />
               </div>
             </div>
@@ -161,11 +156,7 @@ const Login = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-<<<<<<< HEAD
                   autoComplete="new-password"
-=======
-                  autoComplete="current-password"
->>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
                 />
                 <button
                   type="button"
@@ -217,19 +208,19 @@ const Login = () => {
           </div>
 
           {/* Boutons de connexion rapide */}
-          <div className="quick-login-grid">
+          <div className="quick-login-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
             <button
               type="button"
               className="btn-quick-login admin"
               onClick={() => handleQuickLogin('admin')}
-              id="btn-quick-admin"
+              style={{ padding: '0.5rem', gap: '0.4rem' }}
             >
-              <div className="quick-icon">
-                <Shield size={18} />
+              <div className="quick-icon" style={{ width: '28px', height: '28px' }}>
+                <Shield size={14} />
               </div>
               <div className="quick-text">
-                <strong>Connexion Admin</strong>
-                <span>Accès administrateur</span>
+                <strong style={{ fontSize: '0.7rem' }}>Admin</strong>
+                <span style={{ fontSize: '0.6rem' }}>Global</span>
               </div>
             </button>
 
@@ -237,14 +228,29 @@ const Login = () => {
               type="button"
               className="btn-quick-login resp"
               onClick={() => handleQuickLogin('resp')}
-              id="btn-quick-resp"
+              style={{ padding: '0.5rem', gap: '0.4rem' }}
             >
-              <div className="quick-icon">
-                <User size={18} />
+              <div className="quick-icon" style={{ width: '28px', height: '28px' }}>
+                <Shield size={14} />
               </div>
               <div className="quick-text">
-                <strong>Connexion Responsable</strong>
-                <span>Accès responsable</span>
+                <strong style={{ fontSize: '0.7rem' }}>Admin Centre</strong>
+                <span style={{ fontSize: '0.6rem' }}>Forage</span>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              className="btn-quick-login resp"
+              onClick={() => handleQuickLogin('agent')}
+              style={{ padding: '0.5rem', gap: '0.4rem' }}
+            >
+              <div className="quick-icon" style={{ width: '28px', height: '28px' }}>
+                <User size={14} />
+              </div>
+              <div className="quick-text">
+                <strong style={{ fontSize: '0.7rem' }}>Utilisateur</strong>
+                <span style={{ fontSize: '0.6rem' }}>Forage</span>
               </div>
             </button>
           </div>

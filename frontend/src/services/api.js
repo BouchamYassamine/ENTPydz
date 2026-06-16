@@ -1,122 +1,57 @@
 import axios from 'axios';
-<<<<<<< HEAD
 
 // Instance Axios configurée
 const apiClient = axios.create({
-  baseURL: 'http://localhost:5000/api', // URL du backend Express
-  headers: {
-    'Content-Type': 'application/json'
-  }
+  baseURL: 'http://localhost:5000/api',
+  headers: { 'Content-Type': 'application/json' }
 });
 
-// Intercepteur pour ajouter le token JWT s'il existe
+// Intercepteur pour ajouter le token JWT
 apiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
 export const TransferApi = {
-  /**
-   * Récupère la liste des catégories avec leurs matériels
-   */
-  getCategories: async () => {
-    const response = await apiClient.get('/categories');
-    return response.data;
-  },
-
-  /**
-   * Récupère les matériels avec filtres optionnels
-   * @param {Object} params - { categorieId, search }
-   */
-  getMateriels: async (params = {}) => {
-    const response = await apiClient.get('/materiels', { params });
-    return response.data;
-  },
-
-  /**
-   * Crée une nouvelle demande de transfert
-   * @param {Object} transferData - Données du transfert
-   */
-  createTransfert: async (transferData) => {
-    const response = await apiClient.post('/transferts', transferData);
-    return response.data;
-  },
-
-  /**
-   * Récupère les transferts envoyés par un centre
-   * @param {number} centreId 
-   */
-  getTransfertsEnvoyes: async (centreId) => {
-    const response = await apiClient.get(`/transferts/envoyes/${centreId}`);
-    return response.data;
-  },
-
-  /**
-   * Récupère les transferts reçus par un centre
-   * @param {number} centreId 
-   */
-  getTransfertsRecus: async (centreId) => {
-    const response = await apiClient.get(`/transferts/recus/${centreId}`);
-    return response.data;
-  },
-
-  /**
-   * Valide la réception d'un transfert
-   * @param {number} transfertId 
-   */
-  receptionnerTransfert: async (transfertId) => {
-    const response = await apiClient.patch(`/transferts/${transfertId}/receptionner`);
-    return response.data;
-  }
+  getTransfers: async () => { const r = await apiClient.get('/transfers'); return r.data; },
+  createTransfert: async (data) => { const r = await apiClient.post('/transfers', data); return r.data; },
+  getTransfertsEnvoyes: async (centreId) => { const r = await apiClient.get(`/transfers/envoyes/${centreId}`); return r.data; },
+  getTransfertsRecus: async (centreId) => { const r = await apiClient.get(`/transfers/recus/${centreId}`); return r.data; },
+  validateTransfert: async (id, data) => { const r = await apiClient.patch(`/transfers/${id}/validate`, data); return r.data; },
+  receptionnerTransfert: async (id) => { const r = await apiClient.patch(`/transfers/${id}/receive`); return r.data; },
+  getPendingCount: async () => { const r = await apiClient.get('/transfers/pending-count'); return r.data; }
 };
 
 export const UserApi = {
-  getUsers: async () => {
-    const response = await apiClient.get('/users');
-    return response.data;
-  },
-  createUser: async (userData) => {
-    const response = await apiClient.post('/users', userData);
-    return response.data;
-  },
-  updateUser: async (id, userData) => {
-    const response = await apiClient.put(`/users/${id}`, userData);
-    return response.data;
-  },
-  deleteUser: async (id) => {
-    const response = await apiClient.delete(`/users/${id}`);
-    return response.data;
-  }
+  getUsers: async () => { const r = await apiClient.get('/users'); return r.data; },
+  getUserById: async (id) => { const r = await apiClient.get(`/users/${id}`); return r.data; },
+  createUser: async (data) => { const r = await apiClient.post('/users', data); return r.data; },
+  updateUser: async (id, data) => { const r = await apiClient.put(`/users/${id}`, data); return r.data; },
+  deleteUser: async (id) => { const r = await apiClient.delete(`/users/${id}`); return r.data; }
+};
+
+export const CentreApi = {
+  getCentres: async () => { const r = await apiClient.get('/centres'); return r.data; },
+  getCentreById: async (id) => { const r = await apiClient.get(`/centres/${id}`); return r.data; },
+  createCentre: async (data) => { const r = await apiClient.post('/centres', data); return r.data; },
+  updateCentre: async (id, data) => { const r = await apiClient.put(`/centres/${id}`, data); return r.data; },
+  deleteCentre: async (id) => { const r = await apiClient.delete(`/centres/${id}`); return r.data; }
+};
+
+export const MaterielApi = {
+  getMateriels: async (params = {}) => { const r = await apiClient.get('/materials', { params }); return r.data; },
+  getMaterielById: async (id) => { const r = await apiClient.get(`/materials/${id}`); return r.data; },
+  createMateriel: async (data) => { const r = await apiClient.post('/materials', data); return r.data; },
+  updateMateriel: async (id, data) => { const r = await apiClient.put(`/materials/${id}`, data); return r.data; },
+  deleteMateriel: async (id) => { const r = await apiClient.delete(`/materials/${id}`); return r.data; }
+};
+
+export const CategorieApi = {
+  getCategories: async () => { const r = await apiClient.get('/categories'); return r.data; },
+  createCategorie: async (data) => { const r = await apiClient.post('/categories', data); return r.data; },
+  updateCategorie: async (id, data) => { const r = await apiClient.put(`/categories/${id}`, data); return r.data; },
+  deleteCategorie: async (id) => { const r = await apiClient.delete(`/categories/${id}`); return r.data; }
 };
 
 export default apiClient;
-=======
-import config from '../config.js';
-
-// Création d'une instance Axios configurée
-const api = axios.create({
-  baseURL: config.apiUrl,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Intercepteur pour injecter automatiquement le jeton d'authentification (Bearer JWT)
-api.interceptors.request.use(
-  (reqConfig) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      reqConfig.headers.Authorization = `Bearer ${token}`;
-    }
-    return reqConfig;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-export default api;
->>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d

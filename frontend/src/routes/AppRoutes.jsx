@@ -3,10 +3,9 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import Login from '../pages/Login/Login.jsx';
 import AdminDashboard from '../pages/Dashboard/AdminDashboard.jsx';
-<<<<<<< HEAD
 import Users from '../pages/Admin/Users.jsx';
-=======
->>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
+import Centres from '../pages/Admin/Centres.jsx';
+import Materiels from '../pages/Admin/Materiels.jsx';
 import ManagerDashboard from '../pages/Dashboard/ManagerDashboard.jsx';
 import TransferList from '../pages/Transfers/TransferList.jsx';
 import TransferDetail from '../pages/Transfers/TransferDetail.jsx';
@@ -27,11 +26,11 @@ const AppRoutes = () => {
         <Route path="/transfers" element={<TransferList />} />
         <Route path="/transfers/:id" element={<TransferDetail />} />
 
-        {/* Dashboard générique pour tous les utilisateurs non-Admin */}
+        {/* Dashboard générique — Admin Centre et Utilisateur */}
         <Route 
           path="/dashboard" 
           element={
-            <ProtectedRoute allowedRoles={['Responsable Service', 'Agent Logistique', 'Consultant']}>
+            <ProtectedRoute allowedRoles={['Admin Centre', 'Utilisateur']}>
               <ManagerDashboard />
             </ProtectedRoute>
           } 
@@ -47,7 +46,6 @@ const AppRoutes = () => {
           } 
         />
 
-<<<<<<< HEAD
         {/* Gestion des utilisateurs (uniquement Admin) */}
         <Route 
           path="/admin/users" 
@@ -58,17 +56,31 @@ const AppRoutes = () => {
           } 
         />
 
-<<<<<<< Updated upstream
-=======
->>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
-        {/* Création de transferts (uniquement Admin et Responsables) */}
-=======
-        {/* Création de transferts — Règle 1 : interdit pour Admin */}
->>>>>>> Stashed changes
+        {/* Gestion des centres (uniquement Admin) */}
+        <Route 
+          path="/admin/centres" 
+          element={
+            <ProtectedRoute allowedRoles={['Admin', 'ADMIN']}>
+              <Centres />
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* Gestion des matériels — Admin global complet, Admin Centre peut gérer son centre */}
+        <Route 
+          path="/admin/materiels" 
+          element={
+            <ProtectedRoute allowedRoles={['Admin', 'Admin Centre']}>
+              <Materiels />
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* Création de transferts — Utilisateur uniquement */}
         <Route 
           path="/transfers/new" 
           element={
-            <ProtectedRoute allowedRoles={['Responsable Service', 'Agent Logistique', 'Consultant']}>
+            <ProtectedRoute allowedRoles={['Utilisateur']}>
               <NewTransfer />
             </ProtectedRoute>
           } 

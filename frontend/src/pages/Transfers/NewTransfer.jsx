@@ -1,191 +1,128 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { TransferApi, MaterielApi, CentreApi } from '../../services/api.js';
 import useAuth from '../../hooks/useAuth.js';
-import Input from '../../components/common/Input.jsx';
-import Button from '../../components/common/Button.jsx';
-<<<<<<< HEAD
-import MaterialSelector from '../../components/MaterialSelector.jsx';
-=======
->>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
-import { ArrowLeft, Send } from 'lucide-react';
+import { Send, ArrowLeft, Package, MapPin } from 'lucide-react';
+
+const iS = { width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem', boxSizing: 'border-box' };
+const lS = { display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: '600', color: '#475569' };
 
 const NewTransfer = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [materials, setMaterials] = useState([]);
+  const [centres, setCentres] = useState([]);
+  const [formData, setFormData] = useState({ materialId: '', destinationCentreId: '', comments: '' });
+  const [msg, setMsg] = useState({ text: '', type: '' });
+  const [submitting, setSubmitting] = useState(false);
 
-  const [formData, setFormData] = useState({
-    materialBarcode: '',
-<<<<<<< HEAD
-    selectedMaterials: [],
-=======
-    materialName: '',
->>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
-    destinationService: '',
-    reason: ''
-  });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch materials available in user's center
+        const mRes = await MaterielApi.getMateriels({ centreId: user.centreId, statut: 'Disponible' });
+        if (mRes.success) setMaterials(mRes.data);
 
-  const services = ['Forage', 'Maintenance', 'Transport', 'Logistique', 'Production', 'Sécurité'];
+        // Fetch all centers for destination
+        const cRes = await CentreApi.getCentres();
+        if (cRes.success) {
+          // Exclude user's own center from destination options
+          setCentres(cRes.data.filter(c => c.id !== user.centreId));
+        }
+      } catch {
+        setMsg({ text: "Erreur lors du chargement des données", type: 'error' });
+      }
+    };
+    fetchData();
+  }, [user.centreId]);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert('Votre demande de transfert a été soumise au responsable de service avec succès.');
-    navigate('/transfers');
+    if (!formData.materialId || !formData.destinationCentreId) {
+      setMsg({ text: "Veuillez remplir tous les champs obligatoires", type: 'error' });
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await TransferApi.createTransfert(formData);
+      navigate('/transfers');
+    } catch (err) {
+      setMsg({ text: err.response?.data?.message || "Erreur de création", type: 'error' });
+      setSubmitting(false);
+    }
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-      {/* Bouton Retour */}
-      <button 
-        onClick={() => navigate('/transfers')}
-        style={{
-          background: 'none',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.4rem',
-          color: 'var(--gray-600)',
-          fontSize: '0.9rem',
-          fontWeight: '500',
-          marginBottom: '1.5rem',
-          border: 'none',
-          cursor: 'pointer'
-        }}
-      >
-        <ArrowLeft size={16} />
-        Retour à la liste
+    <div style={{ maxWidth: '700px', margin: '0 auto' }}>
+      <button onClick={() => navigate('/transfers')} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', marginBottom: '1.5rem', fontSize: '0.9rem', fontWeight: '600' }}>
+        <ArrowLeft size={16} /> Retour aux transferts
       </button>
 
-      <h1 style={{ fontSize: '1.6rem', fontWeight: '800', color: 'var(--primary-color)', marginBottom: '0.5rem' }}>
-        Créer une demande de transfert
-      </h1>
-      <p style={{ color: 'var(--gray-600)', fontSize: '0.9rem', marginBottom: '2rem' }}>
-        Formulaire officiel de transfert de matériel sous la supervision du service logistique ENTP.
-      </p>
+      <div style={{ backgroundColor: '#fff', borderRadius: '12px', padding: '2.5rem', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+        <h1 style={{ color: '#0f172a', fontSize: '1.5rem', fontWeight: '800', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Send size={24} color="#FF6B35" />
+          Initier un Transfert
+        </h1>
+        <p style={{ color: '#64748b', marginBottom: '2rem', fontSize: '0.95rem' }}>Demandez le transfert d'un matériel de votre centre vers un autre centre ENTP. Cette demande devra être validée par votre responsable.</p>
 
-      <form onSubmit={handleSubmit} className="card" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        
-        {/* Service Émetteur (Rempli automatiquement) */}
-        <div style={{ marginBottom: '1.2rem' }}>
-          <label style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--gray-600)', display: 'block', marginBottom: '0.4rem' }}>
-            Service Émetteur
-          </label>
-          <input 
-            type="text" 
-            value={user?.service || 'Votre Service'} 
-            disabled 
-            style={{
-              padding: '0.7rem 0.9rem',
-              borderRadius: 'var(--border-radius)',
-              border: '1px solid var(--gray-200)',
-              fontSize: '0.95rem',
-              backgroundColor: 'var(--light-color)',
-              width: '100%',
-              cursor: 'not-allowed',
-              fontWeight: '600'
-            }}
-          />
-        </div>
+        {msg.text && (
+          <div style={{ padding: '1rem', marginBottom: '1.5rem', borderRadius: '8px', backgroundColor: msg.type === 'error' ? 'rgba(239,68,68,0.1)' : 'rgba(34,197,94,0.1)', color: msg.type === 'error' ? '#ef4444' : '#16a34a', fontWeight: '500' }}>
+            {msg.text}
+          </div>
+        )}
 
-        {/* Code barre du matériel */}
-        <Input 
-          label="Code barre ou Code inventaire du matériel"
-          name="materialBarcode"
-          placeholder="Ex: ENTP-EQP-XXXXXX"
-          value={formData.materialBarcode}
-          onChange={handleChange}
-          required
-        />
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <label style={lS}><Package size={14} style={{verticalAlign:'middle',marginRight:'0.3rem'}}/> Matériel à transférer <span style={{color:'#ef4444'}}>*</span></label>
+            <select 
+              value={formData.materialId} 
+              onChange={e => setFormData({...formData, materialId: e.target.value})} 
+              style={{ ...iS, backgroundColor: '#f8fafc' }}
+              required
+            >
+              <option value="">-- Sélectionnez un matériel disponible --</option>
+              {materials.map(m => (
+                <option key={m.id} value={m.id}>{m.barcode} - {m.name}</option>
+              ))}
+            </select>
+          </div>
 
-<<<<<<< HEAD
-        {/* Désignation du matériel (Multi-select) */}
-        <MaterialSelector 
-          selectedMaterials={formData.selectedMaterials}
-          onChange={(newSelection) => setFormData({ ...formData, selectedMaterials: newSelection })}
-=======
-        {/* Désignation du matériel */}
-        <Input 
-          label="Désignation précise du matériel"
-          name="materialName"
-          placeholder="Ex: Tiges de forage, Compresseur de chantier, Pompe..."
-          value={formData.materialName}
-          onChange={handleChange}
-          required
->>>>>>> ad7d4cbd2148b8052ee1f773fa6b9f92594dfe3d
-        />
+          <div style={{ marginBottom: '1.5rem' }}>
+            <label style={lS}><MapPin size={14} style={{verticalAlign:'middle',marginRight:'0.3rem'}}/> Centre de destination <span style={{color:'#ef4444'}}>*</span></label>
+            <select 
+              value={formData.destinationCentreId} 
+              onChange={e => setFormData({...formData, destinationCentreId: e.target.value})} 
+              style={{ ...iS, backgroundColor: '#f8fafc' }}
+              required
+            >
+              <option value="">-- Sélectionnez le centre de destination --</option>
+              {centres.map(c => (
+                <option key={c.id} value={c.id}>{c.nom} ({c.ville})</option>
+              ))}
+            </select>
+          </div>
 
-        {/* Service Récepteur */}
-        <div style={{ marginBottom: '1.2rem', display: 'flex', flexDirection: 'column' }}>
-          <label 
-            htmlFor="destinationService"
-            style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--gray-600)', marginBottom: '0.4rem' }}
-          >
-            Service Récepteur Destinataire <span style={{ color: 'var(--danger-color)' }}>*</span>
-          </label>
-          <select
-            id="destinationService"
-            name="destinationService"
-            value={formData.destinationService}
-            onChange={handleChange}
-            required
-            style={{
-              padding: '0.7rem 0.9rem',
-              borderRadius: 'var(--border-radius)',
-              border: '1px solid var(--gray-200)',
-              fontSize: '0.95rem',
-              backgroundColor: 'var(--white)',
-              width: '100%'
-            }}
-          >
-            <option value="">Sélectionner le service destinataire</option>
-            {services
-              .filter(s => s !== user?.service) // Exclure le service actuel
-              .map((srv, idx) => (
-                <option key={idx} value={srv}>{srv}</option>
-              ))
-            }
-          </select>
-        </div>
+          <div style={{ marginBottom: '2.5rem' }}>
+            <label style={lS}>Motif / Commentaires</label>
+            <textarea 
+              value={formData.comments} 
+              onChange={e => setFormData({...formData, comments: e.target.value})} 
+              style={{ ...iS, resize: 'vertical', minHeight: '100px', backgroundColor: '#f8fafc' }} 
+              placeholder="Expliquez la raison de ce transfert..."
+            />
+          </div>
 
-        {/* Motif du Transfert */}
-        <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column' }}>
-          <label 
-            htmlFor="reason"
-            style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--gray-600)', marginBottom: '0.4rem' }}
-          >
-            Motif de la demande de transfert <span style={{ color: 'var(--danger-color)' }}>*</span>
-          </label>
-          <textarea
-            id="reason"
-            name="reason"
-            rows="4"
-            placeholder="Veuillez décrire le motif du transfert, l'emplacement cible et le besoin..."
-            value={formData.reason}
-            onChange={handleChange}
-            required
-            style={{
-              padding: '0.7rem 0.9rem',
-              borderRadius: 'var(--border-radius)',
-              border: '1px solid var(--gray-200)',
-              fontSize: '0.95rem',
-              fontFamily: 'var(--font-family)',
-              width: '100%',
-              resize: 'vertical'
-            }}
-          />
-        </div>
-
-        <Button type="submit" variant="primary" className="w-full">
-          <Send size={18} />
-          Soumettre la demande
-        </Button>
-
-      </form>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <button 
+              type="submit" 
+              disabled={submitting}
+              style={{ padding: '0.8rem 2rem', borderRadius: '8px', border: 'none', backgroundColor: '#FF6B35', color: '#fff', fontWeight: '600', cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.7 : 1, display: 'flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 6px rgba(255,107,53,0.2)' }}
+            >
+              {submitting ? 'Création...' : <><Send size={16} /> Envoyer la demande</>}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
