@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TransferApi } from '../../services/api.js';
 import useAuth from '../../hooks/useAuth.js';
 import { ArrowRight, Check, X, RefreshCw, Plus, FileText, ArrowUpRight, ArrowDownLeft } from 'lucide-react';
@@ -23,6 +24,7 @@ const DirectionBadge = ({ isEnvoye }) => {
 
 const TransferList = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [transfers, setTransfers] = useState([]);
   const [tab, setTab] = useState('tous'); // 'tous', 'envoyes', 'recus'
   const [loading, setLoading] = useState(true);
@@ -106,7 +108,7 @@ const TransferList = () => {
             <RefreshCw size={18} />
           </button>
           {user.role !== 'Admin Centre' && user.role !== 'Admin' && (
-            <button style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0 1.5rem', borderRadius: '8px', border: 'none', backgroundColor: '#E05A1E', color: '#fff', fontWeight: '700', cursor: 'pointer' }}>
+            <button onClick={() => navigate('/transfers/new')} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0 1.5rem', borderRadius: '8px', border: 'none', backgroundColor: '#E05A1E', color: '#fff', fontWeight: '700', cursor: 'pointer' }}>
               <Plus size={18} /> Nouveau Transfert
             </button>
           )}
@@ -182,7 +184,7 @@ const TransferList = () => {
                   </td>
                   <td style={{ padding: '1rem 1.5rem' }}>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <button style={{ padding: '0.5rem 1rem', backgroundColor: '#1C2333', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '0.8rem', fontWeight: '600', cursor: 'pointer' }}>
+                      <button onClick={() => navigate(`/transfers/${t.id}`)} style={{ padding: '0.5rem 1rem', backgroundColor: '#1C2333', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '0.8rem', fontWeight: '600', cursor: 'pointer' }}>
                         Détails
                       </button>
                       {(user.role === 'Admin Centre' || user.role === 'Admin') && t.status === 'En attente' && (

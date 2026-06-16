@@ -50,6 +50,20 @@ const NewTransfer = () => {
     window.print();
   };
 
+  const printData = successData || {
+    numero: tempNumero,
+    status: 'Brouillon',
+    urgency: formData.urgency,
+    quantity: formData.quantity,
+    motif: formData.motif,
+    observations: formData.observations,
+    requestedAt: new Date().toISOString(),
+    sourceCentre: user?.centre,
+    destinationCentre: selectedDestination,
+    material: selectedMaterial,
+    requester: { name: user?.name }
+  };
+
   const fetchInitialData = async () => {
     setLoading(true);
     setErrorLoad(null);
@@ -350,7 +364,7 @@ const NewTransfer = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={!isFormReady || submitting || loading || !user?.centreId}
+                  disabled={submitting || loading || !user?.centreId}
                   title={!user?.centreId ? 'Votre compte n\'est pas associé à un centre' : ''}
                   style={{
                     padding: '0.55rem 1.25rem',
@@ -360,14 +374,14 @@ const NewTransfer = () => {
                     backgroundColor: '#E05A1E',
                     border: 'none',
                     borderRadius: '8px',
-                    cursor: (!isFormReady || submitting || loading || !user?.centreId) ? 'not-allowed' : 'pointer',
-                    opacity: (!isFormReady || submitting || loading || !user?.centreId) ? 0.5 : 1,
+                    cursor: (submitting || loading || !user?.centreId) ? 'not-allowed' : 'pointer',
+                    opacity: (submitting || loading || !user?.centreId) ? 0.5 : 1,
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.5rem',
                     transition: 'all 0.15s',
                   }}
-                  onMouseOver={(e) => { if (isFormReady && !submitting) e.currentTarget.style.backgroundColor = '#C94D18'; }}
+                  onMouseOver={(e) => { if (!submitting) e.currentTarget.style.backgroundColor = '#C94D18'; }}
                   onMouseOut={(e)  => { e.currentTarget.style.backgroundColor = '#E05A1E'; }}
                 >
                   {submitting ? (
@@ -403,6 +417,9 @@ const NewTransfer = () => {
         </div>
 
       </div>
+      
+      {/* Composant caché pour l'impression */}
+      <BonTransfertPrint transfer={printData} />
     </div>
   );
 };

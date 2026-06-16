@@ -125,11 +125,11 @@ const seedDatabase = async () => {
 
     // 6. Create Materials
     const materialsData = [
-      { name: 'Pompe à boue Triplex', barcode: 'MAT-DFO-001', categoryId: categories[0].id, centreId: getCentreId('HMD-DFO'), lieuId: null, status: 'Disponible', currentService: 'Forage' },
-      { name: 'Moteur de fond', barcode: 'MAT-DFO-002', categoryId: categories[0].id, centreId: getCentreId('HMD-DFO'), lieuId: null, status: 'Disponible', currentService: 'Forage' },
-      { name: 'Générateur Diesel 500kVA', barcode: 'MAT-DMP-001', categoryId: categories[0].id, centreId: getCentreId('HMD-DMP'), lieuId: null, status: 'Disponible', currentService: 'Maintenance' },
-      { name: 'Tubes de Forage', barcode: 'MAT-DUET-001', categoryId: categories[4].id, centreId: getCentreId('HMD-DUET'), lieuId: null, status: 'Disponible', currentService: 'Tubulaires' },
-      { name: 'Ordinateur Portable Dell', barcode: 'IT-001', categoryId: categories[3].id, centreId: getCentreId('HMD-DG'), lieuId: null, status: 'Disponible', currentService: 'IT' },
+      { name: 'Pompe à boue Triplex', barcode: 'ENTP-PMB-000001', codeInventaire: 'INV-2024-000001', categorie: 'Pompe à Boue', centreId: getCentreId('HMD-DFO'), lieuId: null, status: 'Disponible', etatGeneral: 'Bon', marque: 'National Oilwell' },
+      { name: 'Moteur de fond', barcode: 'ENTP-MTB-000002', codeInventaire: 'INV-2024-000002', categorie: 'Moteur de Boue', centreId: getCentreId('HMD-DFO'), lieuId: null, status: 'Disponible', etatGeneral: 'Bon', marque: 'Schlumberger' },
+      { name: 'Générateur Diesel 500kVA', barcode: 'ENTP-GEL-000003', codeInventaire: 'INV-2024-000003', categorie: 'Groupe Électrogène', centreId: getCentreId('HMD-DMP'), lieuId: null, status: 'Disponible', etatGeneral: 'Usagé', marque: 'Caterpillar' },
+      { name: 'Tubes de Forage', barcode: 'ENTP-TDF-000004', codeInventaire: 'INV-2024-000004', categorie: 'Tiges de Forage', centreId: getCentreId('HMD-DUET'), lieuId: null, status: 'Disponible', etatGeneral: 'Bon', marque: 'Vallourec' },
+      { name: 'Ordinateur Portable Dell', barcode: 'ENTP-INF-000005', codeInventaire: 'INV-2024-000005', categorie: 'Matériel Informatique', centreId: getCentreId('HMD-DG'), lieuId: null, status: 'Disponible', etatGeneral: 'Neuf', marque: 'Dell' },
     ];
 
     for (const m of materialsData) {
