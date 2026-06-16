@@ -157,29 +157,53 @@ const NewTransfer = () => {
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', paddingBottom: '3rem' }}>
-      {/* En-tête de page */}
-      <div style={{ marginBottom: '2rem' }}>
-        <button onClick={() => navigate('/transfers')} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: '#6B7280', cursor: 'pointer', marginBottom: '1rem', fontSize: '0.85rem', fontWeight: '600', padding: 0 }}>
-          <ArrowLeft size={16} /> Accueil &gt; Transferts &gt; Nouveau
-        </button>
-        
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#FDF2ED', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <RefreshCw size={24} color="#E05A1E" />
-          </div>
-          <h1 style={{ color: '#1A1A2E', fontSize: '2rem', fontWeight: '800', margin: 0 }}>Initier un Transfert</h1>
+      {/* En-tête Institutionnel ENTP */}
+      <div style={{ backgroundColor: '#2C3E50', color: '#fff', padding: '1.25rem 2rem', borderRadius: '12px', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+        <div style={{ backgroundColor: '#fff', padding: '0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Building2 size={32} color="#E05A1E" />
         </div>
-        <p style={{ color: '#6B7280', fontSize: '1rem', margin: '0 0 1.5rem 64px' }}>Demandez le transfert d'un matériel vers un autre centre ENTP.</p>
-        <div style={{ height: '1px', backgroundColor: '#E5E7EB', width: '100%' }}></div>
+        <div>
+          <h1 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '800', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Entreprise Nationale des Travaux aux Puits</h1>
+          <div style={{ fontSize: '0.85rem', color: '#CBD5E1', marginTop: '0.25rem', fontWeight: '500' }}>Système de Gestion Logistique - Formulaire Officiel</div>
+        </div>
+      </div>
+
+      {/* Navigation & Stepper */}
+      <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '1px solid #E2E8F0', paddingBottom: '1rem' }}>
+        <div>
+          <button onClick={() => navigate('/transfers')} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none', color: '#64748B', cursor: 'pointer', marginBottom: '0.75rem', fontSize: '0.8rem', fontWeight: '600', padding: 0 }}>
+            <ArrowLeft size={16} /> Accueil &gt; Transferts &gt; Nouveau Transfert
+          </button>
+          <h2 style={{ color: '#1E293B', fontSize: '1.5rem', fontWeight: '800', margin: 0 }}>Initier un Transfert</h2>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '2rem' }}>
+          <div style={{ color: '#E05A1E', fontWeight: '700', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#E05A1E', color: '#fff', fontSize: '0.7rem' }}>1</span>
+            Informations matériel
+          </div>
+          <div style={{ color: '#94A3B8', fontWeight: '600', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#E2E8F0', color: '#64748B', fontSize: '0.7rem' }}>2</span>
+            Destinataire
+          </div>
+          <div style={{ color: '#94A3B8', fontWeight: '600', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#E2E8F0', color: '#64748B', fontSize: '0.7rem' }}>3</span>
+            Validation finale
+          </div>
+        </div>
       </div>
 
       <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', alignItems: 'flex-start' }} id="form-top">
         
         {/* Colonne Gauche : Formulaire (65%) */}
-        <div style={{ flex: '1 1 600px', backgroundColor: '#fff', borderRadius: '16px', padding: '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', border: '1px solid #F3F4F6' }}>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1A1A2E', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <FileText size={20} color="#E05A1E" /> Détails du transfert
-          </h2>
+        <div style={{ flex: '1 1 600px', backgroundColor: '#fff', borderRadius: '16px', padding: '2rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', border: '1px solid #E2E8F0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '2px solid #2C3E50' }}>
+            <FileText size={20} color="#2C3E50" />
+            <div>
+              <h2 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#2C3E50', margin: 0, letterSpacing: '0.02em', textTransform: 'uppercase' }}>Détails du transfert</h2>
+              <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748B', marginTop: '0.15rem' }}>Renseignez les informations du bon de transfert ENTP</p>
+            </div>
+          </div>
 
           {errorLoad && (
             <div style={{ padding: '1rem', marginBottom: '1.5rem', borderRadius: '8px', backgroundColor: '#FEF2F2', border: '1px solid #FECACA', display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -201,19 +225,24 @@ const NewTransfer = () => {
           )}
 
           <form onSubmit={handleSubmit}>
+            {/* Section A — Référence du bon */}
+            <div style={{ marginBottom: '0.75rem', paddingBottom: '0.5rem', borderBottom: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '0.7rem', fontWeight: '800', color: '#fff', backgroundColor: '#2C3E50', padding: '2px 8px', borderRadius: '4px', letterSpacing: '0.05em' }}>A</span>
+              <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Référence &amp; Identification</span>
+            </div>
             {/* 1. N° et 2. Date */}
             <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '2rem' }}>
               <div style={{ flex: 1 }}>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: '700', color: '#6B7280' }}>
-                  N° Bon de transfert
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.8rem', fontWeight: '600', color: '#475569', letterSpacing: '0.03em' }}>
+                  N° BON DE TRANSFERT
                 </label>
-                <div style={{ padding: '0.75rem 1rem', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#94A3B8', fontWeight: '600', fontSize: '0.9rem' }}>
-                  <Hash size={16} /> {tempNumero} <span style={{ fontSize: '0.7rem', fontWeight: '400', fontStyle: 'italic' }}>(auto)</span>
+                <div style={{ padding: '0.75rem 1rem', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#94A3B8', fontWeight: '700', fontSize: '0.9rem', fontFamily: 'monospace' }}>
+                  <Hash size={16} /> {tempNumero} <span style={{ fontSize: '0.7rem', fontWeight: '400', fontStyle: 'italic', fontFamily: 'inherit' }}>(auto-assigné)</span>
                 </div>
               </div>
               <div style={{ flex: 1 }}>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: '700', color: '#6B7280' }}>
-                  Date de demande
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.8rem', fontWeight: '600', color: '#475569', letterSpacing: '0.03em' }}>
+                  DATE DE DEMANDE
                 </label>
                 <div style={{ padding: '0.75rem 1rem', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748B', fontWeight: '600', fontSize: '0.9rem' }}>
                   <Calendar size={16} /> {todayDate}
@@ -221,10 +250,15 @@ const NewTransfer = () => {
               </div>
             </div>
 
+            {/* Section B — Localisation */}
+            <div style={{ marginBottom: '0.75rem', paddingBottom: '0.5rem', borderBottom: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '0.7rem', fontWeight: '800', color: '#fff', backgroundColor: '#2C3E50', padding: '2px 8px', borderRadius: '4px', letterSpacing: '0.05em' }}>B</span>
+              <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Localisation — Origine &amp; Destination</span>
+            </div>
             {/* 3. Centre émetteur */}
             <div style={{ marginBottom: '2rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: '700', color: '#6B7280' }}>
-                Centre émetteur (auto)
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.8rem', fontWeight: '600', color: '#475569', letterSpacing: '0.03em' }}>
+                CENTRE ÉMETTEUR (auto)
               </label>
               {!user?.centreId ? (
                 <div style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '8px', padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
@@ -253,7 +287,7 @@ const NewTransfer = () => {
             </div>
 
             {/* 4. Centre récepteur */}
-            <div id="field-destinationCentreId" style={{ marginBottom: '2rem' }}>
+            <div id="field-destinationCentreId" style={{ marginBottom: '2.5rem' }}>
               <CentreRecepteurSelect 
                 centres={centres} 
                 selectedId={formData.destinationCentreId} 
@@ -262,6 +296,11 @@ const NewTransfer = () => {
               />
             </div>
 
+            {/* Section C — Matériel */}
+            <div style={{ marginBottom: '0.75rem', paddingBottom: '0.5rem', borderBottom: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '0.7rem', fontWeight: '800', color: '#fff', backgroundColor: '#2C3E50', padding: '2px 8px', borderRadius: '4px', letterSpacing: '0.05em' }}>C</span>
+              <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Matériel &amp; Quantité</span>
+            </div>
             {/* 5. Matériel */}
             <div id="field-materialId" style={{ marginBottom: '2rem' }}>
               <MaterialSelect 
@@ -273,9 +312,9 @@ const NewTransfer = () => {
             </div>
 
             {/* 6. Quantité */}
-            <div id="field-quantity" style={{ marginBottom: '2rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: '700', color: '#1A1A2E' }}>
-                Quantité à transférer <span style={{ color: '#EF4444' }}>*</span>
+            <div id="field-quantity" style={{ marginBottom: '2.5rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.8rem', fontWeight: '600', color: '#475569', letterSpacing: '0.03em' }}>
+                QUANTITÉ À TRANSFÉRER <span style={{ color: '#EF4444' }}>*</span>
               </label>
               <div style={{ position: 'relative', width: '200px' }}>
                 <input 
@@ -292,12 +331,17 @@ const NewTransfer = () => {
               {errors.quantity && <div style={{ color: '#EF4444', fontSize: '0.75rem', marginTop: '0.4rem', fontWeight: '500' }}>{errors.quantity}</div>}
             </div>
 
+            {/* Section D — Justification */}
+            <div style={{ marginBottom: '0.75rem', paddingBottom: '0.5rem', borderBottom: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '0.7rem', fontWeight: '800', color: '#fff', backgroundColor: '#2C3E50', padding: '2px 8px', borderRadius: '4px', letterSpacing: '0.05em' }}>D</span>
+              <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Justification &amp; Observations</span>
+            </div>
             {/* 7. Motif */}
             <div id="field-motif" style={{ marginBottom: '2rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.2rem', fontSize: '0.85rem', fontWeight: '700', color: '#1A1A2E' }}>
-                Motif du transfert <span style={{ color: '#EF4444' }}>*</span>
+              <label style={{ display: 'block', marginBottom: '0.2rem', fontSize: '0.8rem', fontWeight: '600', color: '#475569', letterSpacing: '0.03em' }}>
+                MOTIF DU TRANSFERT <span style={{ color: '#EF4444' }}>*</span>
               </label>
-              <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.5rem' }}>Expliquez brièvement la raison du transfert</div>
+              <div style={{ fontSize: '0.75rem', color: '#64748B', marginBottom: '0.5rem' }}>Minimum 10 caractères — Expliquez la raison opérationnelle du transfert</div>
               <textarea 
                 value={formData.motif}
                 onChange={(e) => setFormData({...formData, motif: e.target.value})}
@@ -317,8 +361,8 @@ const NewTransfer = () => {
 
             {/* 8. Observations */}
             <div style={{ marginBottom: '2.5rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: '700', color: '#1A1A2E' }}>
-                Observations (optionnel)
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.8rem', fontWeight: '600', color: '#475569', letterSpacing: '0.03em' }}>
+                OBSERVATIONS <span style={{ color: '#94A3B8', fontWeight: '400', textTransform: 'none', letterSpacing: 'normal', fontSize: '0.75rem' }}>(optionnel)</span>
               </label>
               <textarea 
                 value={formData.observations}
@@ -328,6 +372,11 @@ const NewTransfer = () => {
               />
             </div>
 
+            {/* Section E — Criticité */}
+            <div style={{ marginBottom: '0.75rem', paddingBottom: '0.5rem', borderBottom: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '0.7rem', fontWeight: '800', color: '#fff', backgroundColor: '#E05A1E', padding: '2px 8px', borderRadius: '4px', letterSpacing: '0.05em' }}>E</span>
+              <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Niveau de Criticité — HSE / Opérations</span>
+            </div>
             {/* 9. Urgence */}
             <div style={{ marginBottom: '2.5rem' }}>
               <UrgencySelector 
@@ -336,64 +385,67 @@ const NewTransfer = () => {
               />
             </div>
 
-            <div style={{ height: '1px', backgroundColor: '#E5E7EB', margin: '0 0 1.25rem 0' }}></div>
-
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <p style={{ margin: 0, fontSize: '0.75rem', color: '#9CA3AF', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                🔒 Soumis à validation responsable centre
-              </p>
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
+            {/* Footer / Boutons */}
+            <div style={{ marginTop: '2.5rem', borderTop: '1px solid #E2E8F0', paddingTop: '1.5rem' }}>
+              <div style={{ fontSize: '0.75rem', color: '#64748B', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                <span style={{ fontWeight: '700', color: '#1E293B' }}>Traçabilité :</span> Toute demande est horodatée et traçable conformément à la procédure ENTP-PROC-042.
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
                 <button
                   type="button"
                   onClick={() => navigate('/transfers')}
                   style={{
-                    padding: '0.55rem 1.25rem',
+                    padding: '0.65rem 1.25rem',
                     fontSize: '0.875rem',
-                    fontWeight: '500',
-                    color: '#4B5563',
+                    fontWeight: '600',
+                    color: '#64748B',
                     backgroundColor: '#fff',
-                    border: '1px solid #E5E7EB',
+                    border: '1px solid #E2E8F0',
                     borderRadius: '8px',
                     cursor: 'pointer',
-                    transition: 'background 0.15s',
                   }}
-                  onMouseOver={(e) => { e.currentTarget.style.backgroundColor = '#F9FAFB'; }}
-                  onMouseOut={(e)  => { e.currentTarget.style.backgroundColor = '#fff'; }}
                 >
                   Annuler
                 </button>
                 <button
-                  type="submit"
-                  disabled={submitting || loading || !user?.centreId}
-                  title={!user?.centreId ? 'Votre compte n\'est pas associé à un centre' : ''}
+                  type="button"
+                  onClick={() => alert("Le brouillon a été enregistré localement (Simulation)")}
                   style={{
-                    padding: '0.55rem 1.25rem',
+                    padding: '0.65rem 1.25rem',
                     fontSize: '0.875rem',
-                    fontWeight: '500',
+                    fontWeight: '600',
+                    color: '#2C3E50',
+                    backgroundColor: '#F8FAFC',
+                    border: '1px solid #CBD5E1',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Enregistrer comme brouillon
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting || loading || !user?.centreId || !isFormReady}
+                  title={
+                    !user?.centreId ? 'Votre compte n\'est pas associé à un centre' : 
+                    !isFormReady ? 'Veuillez remplir tous les champs obligatoires' : ''
+                  }
+                  style={{
+                    padding: '0.65rem 1.5rem',
+                    fontSize: '0.875rem',
+                    fontWeight: '700',
                     color: '#fff',
-                    backgroundColor: '#E05A1E',
+                    backgroundColor: (submitting || loading || !user?.centreId || !isFormReady) ? '#CBD5E1' : '#E05A1E',
                     border: 'none',
                     borderRadius: '8px',
-                    cursor: (submitting || loading || !user?.centreId) ? 'not-allowed' : 'pointer',
-                    opacity: (submitting || loading || !user?.centreId) ? 0.5 : 1,
+                    cursor: (submitting || loading || !user?.centreId || !isFormReady) ? 'not-allowed' : 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.5rem',
-                    transition: 'all 0.15s',
+                    transition: 'background-color 0.2s',
                   }}
-                  onMouseOver={(e) => { if (!submitting) e.currentTarget.style.backgroundColor = '#C94D18'; }}
-                  onMouseOut={(e)  => { e.currentTarget.style.backgroundColor = '#E05A1E'; }}
                 >
-                  {submitting ? (
-                    <>
-                      <span style={{
-                        display: 'inline-block', width: '14px', height: '14px',
-                        border: '2px solid #fff', borderTopColor: 'transparent',
-                        borderRadius: '50%', animation: 'spin 0.6s linear infinite'
-                      }} />
-                      Envoi...
-                    </>
-                  ) : '→ Soumettre la demande'}
+                  {submitting ? 'Envoi...' : 'Soumettre la demande'}
                 </button>
               </div>
             </div>
@@ -413,6 +465,7 @@ const NewTransfer = () => {
             isSubmitted={!!successData}
             isFormReady={isFormReady}
             onPrint={handlePrint}
+            motif={formData.motif}
           />
         </div>
 

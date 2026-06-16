@@ -1,19 +1,20 @@
 import React from 'react';
+import { AlertTriangle, Clock, CheckCircle } from 'lucide-react';
 
 const UrgencySelector = ({ urgency, onChange }) => {
   const options = [
-    { value: 'Normal',   dotClass: 'bg-green-500',  dot: '#10B981' },
-    { value: 'Urgent',   dotClass: 'bg-yellow-500', dot: '#F59E0B' },
-    { value: 'Critique', dotClass: 'bg-red-500',    dot: '#EF4444' },
+    { value: 'Normal',   icon: CheckCircle,   color: '#10B981', bg: '#ECFDF5', border: '#34D399', desc: 'Délai standard 5-7 jours' },
+    { value: 'Urgent',   icon: Clock,         color: '#F59E0B', bg: '#FFFBEB', border: '#FBBF24', desc: 'Traitement prioritaire 24-48h' },
+    { value: 'Critique', icon: AlertTriangle, color: '#EF4444', bg: '#FEF2F2', border: '#F87171', desc: 'Arrêt de production - traitement immédiat' },
   ];
 
   return (
     <div>
-      <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: '700', color: '#1A1A2E' }}>
+      <label style={{ display: 'block', marginBottom: '0.8rem', fontSize: '0.875rem', fontWeight: '600', color: '#2C3E50', letterSpacing: '0.02em', textTransform: 'uppercase' }}>
         Niveau d'urgence <span style={{ color: '#EF4444' }}>*</span>
       </label>
-      <div style={{ display: 'flex', gap: '0.75rem' }}>
-        {options.map(({ value, dot }) => {
+      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        {options.map(({ value, icon: Icon, color, bg, border, desc }) => {
           const isSelected = urgency === value;
           return (
             <button
@@ -21,31 +22,25 @@ const UrgencySelector = ({ urgency, onChange }) => {
               type="button"
               onClick={() => onChange(value)}
               style={{
+                flex: '1 1 200px',
                 display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.45rem 1rem',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                padding: '1rem',
                 borderRadius: '8px',
-                border: `2px solid ${isSelected ? '#E05A1E' : '#E5E7EB'}`,
-                backgroundColor: isSelected ? '#FDF2ED' : '#fff',
-                color: isSelected ? '#C94D18' : '#4B5563',
-                fontSize: '0.85rem',
-                fontWeight: '500',
+                border: `2px solid ${isSelected ? color : '#E5E7EB'}`,
+                backgroundColor: isSelected ? bg : '#fff',
                 cursor: 'pointer',
-                transition: 'all 0.15s ease',
+                transition: 'all 0.2s',
+                textAlign: 'left'
               }}
-              onMouseOver={(e) => { if (!isSelected) e.currentTarget.style.borderColor = '#D1D5DB'; }}
-              onMouseOut={(e)  => { if (!isSelected) e.currentTarget.style.borderColor = '#E5E7EB'; }}
             >
-              <span style={{
-                display: 'inline-block',
-                width: '10px',
-                height: '10px',
-                borderRadius: '50%',
-                backgroundColor: dot,
-                flexShrink: 0,
-              }} />
-              {value}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem', color: isSelected ? color : '#4B5563', fontWeight: '700', fontSize: '0.95rem' }}>
+                <Icon size={18} /> {value}
+              </div>
+              <div style={{ fontSize: '0.75rem', color: isSelected ? '#4B5563' : '#9CA3AF', lineHeight: '1.4' }}>
+                {desc}
+              </div>
             </button>
           );
         })}

@@ -1,10 +1,18 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Package, X, RefreshCw, UploadCloud, CheckCircle, XCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Package, X, UploadCloud, CheckCircle, XCircle } from 'lucide-react';
 import { MaterielApi, CentreApi } from '../../services/api.js';
 
-const iS = { width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.95rem', boxSizing: 'border-box', backgroundColor: '#fff', transition: 'border-color 0.2s' };
-const lS = { display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: '700', color: '#1e293b' };
-const errS = { color: '#ef4444', fontSize: '0.75rem', marginTop: '0.3rem', fontWeight: '500' };
+const iS = { width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid', outline: 'none', fontSize: '0.875rem', backgroundColor: '#fff', color: '#374151', boxSizing: 'border-box' };
+const getIs = (isErr) => ({ ...iS, borderColor: isErr ? '#ef4444' : '#e5e7eb' });
+const lS = { display: 'block', marginBottom: '0.375rem', fontSize: '0.875rem', fontWeight: '500', color: '#374151' };
+const errS = { color: '#ef4444', fontSize: '0.75rem', marginTop: '0.25rem', fontWeight: '500' };
+
+const SectionTitle = ({ titre }) => (
+  <h3 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid #f3f4f6', paddingBottom: '0.5rem', marginBottom: '1rem', marginTop: '1.5rem' }}>
+    <span style={{ color: '#f97316' }}>▸</span>
+    {titre}
+  </h3>
+);
 
 const CATEGORIES = [
   { group: 'Équipements de Forage', items: [{ nom: 'Appareil de Forage', code: 'FOR' }, { nom: 'Pompe à Boue', code: 'PMB' }, { nom: 'Tête d\'Injection', code: 'TDI' }, { nom: 'Table de Rotation', code: 'TDR' }, { nom: 'Moteur de Boue', code: 'MTB' }, { nom: 'BOP / Équipements Sécurité', code: 'BOP' }, { nom: 'Tiges de Forage', code: 'TDF' }, { nom: 'Tubulaires / Cuvelage', code: 'TUB' }, { nom: 'Trépans / Outils de Fond', code: 'TRE' }] },
@@ -44,6 +52,7 @@ const NouveauMaterielModal = ({ onClose, onSuccess, initialData = null }) => {
   const [errors, setErrors] = useState({});
   const [barcodeAvailable, setBarcodeAvailable] = useState(null);
   const [inventaireAvailable, setInventaireAvailable] = useState(null);
+  const fileInputRef = useRef(null);
   
   useEffect(() => {
     fetchCentres();
@@ -87,22 +96,30 @@ const NouveauMaterielModal = ({ onClose, onSuccess, initialData = null }) => {
   // Debounced API checks
   useEffect(() => {
     if (!form.barcode || form.barcode === initialData?.barcode) return;
+    setBarcodeAvailable(null); // reset while checking
     const timer = setTimeout(async () => {
       try {
         const res = await MaterielApi.checkBarcode(form.barcode);
-        setBarcodeAvailable(res.data?.available);
-      } catch (e) { setBarcodeAvailable(false); }
+        setBarcodeAvailable(res?.available ?? null);
+      } catch (e) { 
+        // On network error, don't block the button — just show nothing
+        setBarcodeAvailable(null); 
+      }
     }, 500);
     return () => clearTimeout(timer);
   }, [form.barcode]);
 
   useEffect(() => {
     if (!form.codeInventaire || form.codeInventaire === initialData?.codeInventaire) return;
+    setInventaireAvailable(null); // reset while checking
     const timer = setTimeout(async () => {
       try {
         const res = await MaterielApi.checkInventaire(form.codeInventaire);
-        setInventaireAvailable(res.data?.available);
-      } catch (e) { setInventaireAvailable(false); }
+        setInventaireAvailable(res?.available ?? null);
+      } catch (e) { 
+        // On network error, don't block the button — just show nothing
+        setInventaireAvailable(null); 
+      }
     }, 500);
     return () => clearTimeout(timer);
   }, [form.codeInventaire]);
@@ -174,23 +191,25 @@ const NouveauMaterielModal = ({ onClose, onSuccess, initialData = null }) => {
     }
   };
 
-  const inputStyle = (field) => ({
-    ...iS,
-    borderColor: errors[field] ? '#ef4444' : '#cbd5e1'
-  });
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("La photo dépasse la taille maximale de 5MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm({ ...form, photo: reader.result }); // Base64 string
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
-  const sectionStyle = {
-    backgroundColor: '#f8fafc',
-    padding: '0.4rem 1rem',
-    borderRadius: '6px',
-    marginBottom: '1rem',
-    color: '#0f172a',
-    fontWeight: '700',
-    fontSize: '0.9rem',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    borderLeft: '4px solid #E05A1E'
+  const clearPhoto = (e) => {
+    e.stopPropagation();
+    setForm({ ...form, photo: '' });
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   // Group centres by direction
@@ -201,16 +220,32 @@ const NouveauMaterielModal = ({ onClose, onSuccess, initialData = null }) => {
     return acc;
   }, {});
 
+  const getStatutStyle = (s, isSelected) => {
+    if (!isSelected) return { backgroundColor: '#fff', borderColor: '#e5e7eb', color: '#6b7280' };
+    if (s.color === 'green') return { backgroundColor: '#ecfdf5', borderColor: '#10b981', color: '#047857' };
+    if (s.color === 'yellow') return { backgroundColor: '#fffbeb', borderColor: '#f59e0b', color: '#b45309' };
+    if (s.color === 'red') return { backgroundColor: '#fef2f2', borderColor: '#ef4444', color: '#b91c1c' };
+    return { backgroundColor: '#f3f4f6', borderColor: '#6b7280', color: '#374151' };
+  };
+
+  const getEtatStyle = (isSelected) => ({
+    flex: 1, padding: '0.625rem 0.75rem', borderRadius: '0.25rem', border: '1px solid', textAlign: 'center', transition: 'all 0.15s', cursor: 'pointer',
+    backgroundColor: isSelected ? '#fff7ed' : '#fff',
+    borderColor: isSelected ? '#f97316' : '#e5e7eb'
+  });
+
   return (
-    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15,23,42,0.75)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '2rem' }}>
-      <div style={{ backgroundColor: '#fff', borderRadius: '12px', width: '100%', maxWidth: '700px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15,23,42,0.75)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1.5rem' }}>
+      <div style={{ backgroundColor: '#fff', borderRadius: '0.75rem', width: '100%', maxWidth: '700px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
         
         {/* Header */}
-        <div style={{ padding: '1.2rem 1.5rem', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f8fafc' }}>
-          <h2 style={{ margin: 0, fontSize: '1.2rem', fontWeight: '800', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Package size={20} color="#E05A1E" /> {isEditing ? 'Modifier matériel' : 'Nouveau matériel'}
+        <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f8fafc' }}>
+          <h2 style={{ margin: 0, fontSize: '1.125rem', fontWeight: '700', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Package size={20} color="#ea580c" /> {isEditing ? 'Modifier matériel' : 'Nouveau matériel'}
           </h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}><X size={20}/></button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}>
+            <X size={20}/>
+          </button>
         </div>
         
         {/* Body (Scrollable) */}
@@ -218,39 +253,35 @@ const NouveauMaterielModal = ({ onClose, onSuccess, initialData = null }) => {
           <form id="material-form" onSubmit={handleSubmit}>
             
             {/* Section 1: Identification */}
-            <div style={sectionStyle}>Identification</div>
+            <SectionTitle titre="Identification" />
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
               <div>
                 <label style={lS}>Code Barre <span style={{color: '#ef4444'}}>*</span></label>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <div style={{ position: 'relative', flex: 1 }}>
-                    <input value={form.barcode} onChange={e => setForm({...form, barcode: e.target.value})} style={{...inputStyle('barcode'), paddingRight: '2.5rem', fontFamily: 'monospace', fontWeight: '600', color: '#334155'}} placeholder="ENTP-EQP-XXXXXX" />
-                    {form.barcode && form.barcode !== initialData?.barcode && barcodeAvailable !== null && (
-                      <span style={{ position: 'absolute', right: '0.5rem', top: '50%', transform: 'translateY(-50%)' }}>
-                        {barcodeAvailable ? <CheckCircle size={18} color="#16a34a" /> : <XCircle size={18} color="#ef4444" />}
-                      </span>
-                    )}
-                  </div>
-                  <button type="button" onClick={generateBarcode} style={{ padding: '0 0.8rem', backgroundColor: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: '600', color: '#475569' }}>
-                    <RefreshCw size={14}/>
+                <div style={{ position: 'relative' }}>
+                  <input value={form.barcode} onChange={e => setForm({...form, barcode: e.target.value})} style={{...getIs(errors.barcode), paddingRight: '5rem', fontFamily: 'monospace'}} placeholder="ENTP-EQP-XXXXXX" />
+                  {form.barcode && form.barcode !== initialData?.barcode && barcodeAvailable !== null && (
+                    <span style={{ position: 'absolute', right: '4rem', top: '50%', transform: 'translateY(-50%)' }}>
+                      {barcodeAvailable ? <CheckCircle size={16} color="#10b981" /> : <XCircle size={16} color="#ef4444" />}
+                    </span>
+                  )}
+                  <button type="button" onClick={generateBarcode} style={{ position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', fontSize: '0.75rem', color: '#ea580c', fontWeight: '500', textDecoration: 'underline', cursor: 'pointer' }}>
+                    Générer
                   </button>
                 </div>
                 {errors.barcode && <div style={errS}>{errors.barcode}</div>}
               </div>
               
               <div>
-                <label style={lS}>Code Inventaire <span style={{color: '#ef4444'}}>*</span></label>
-                <div style={{ display: 'flex', gap: '0.5rem' }} title="Numéro d'inventaire interne ENTP">
-                  <div style={{ position: 'relative', flex: 1 }}>
-                    <input value={form.codeInventaire} onChange={e => setForm({...form, codeInventaire: e.target.value})} style={{...inputStyle('codeInventaire'), paddingRight: '2.5rem', fontFamily: 'monospace', fontWeight: '600', color: '#334155'}} placeholder="INV-2026-XXXXXX" />
-                    {form.codeInventaire && form.codeInventaire !== initialData?.codeInventaire && inventaireAvailable !== null && (
-                      <span style={{ position: 'absolute', right: '0.5rem', top: '50%', transform: 'translateY(-50%)' }}>
-                        {inventaireAvailable ? <CheckCircle size={18} color="#16a34a" /> : <XCircle size={18} color="#ef4444" />}
-                      </span>
-                    )}
-                  </div>
-                  <button type="button" onClick={generateInventaire} style={{ padding: '0 0.8rem', backgroundColor: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: '600', color: '#475569' }}>
-                    <RefreshCw size={14}/>
+                <label style={lS} title="Numéro d'inventaire interne ENTP">Code Inventaire <span style={{color: '#ef4444'}}>*</span></label>
+                <div style={{ position: 'relative' }}>
+                  <input value={form.codeInventaire} onChange={e => setForm({...form, codeInventaire: e.target.value})} style={{...getIs(errors.codeInventaire), paddingRight: '5rem', fontFamily: 'monospace'}} placeholder="INV-2026-XXXXXX" />
+                  {form.codeInventaire && form.codeInventaire !== initialData?.codeInventaire && inventaireAvailable !== null && (
+                    <span style={{ position: 'absolute', right: '4rem', top: '50%', transform: 'translateY(-50%)' }}>
+                      {inventaireAvailable ? <CheckCircle size={16} color="#10b981" /> : <XCircle size={16} color="#ef4444" />}
+                    </span>
+                  )}
+                  <button type="button" onClick={generateInventaire} style={{ position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', fontSize: '0.75rem', color: '#ea580c', fontWeight: '500', textDecoration: 'underline', cursor: 'pointer' }}>
+                    Générer
                   </button>
                 </div>
                 {errors.codeInventaire && <div style={errS}>{errors.codeInventaire}</div>}
@@ -259,21 +290,21 @@ const NouveauMaterielModal = ({ onClose, onSuccess, initialData = null }) => {
             
             <div style={{ marginBottom: '1rem' }}>
               <label style={lS}>Désignation du matériel <span style={{color: '#ef4444'}}>*</span></label>
-              <input value={form.name} onChange={e => setForm({...form, name: e.target.value})} style={inputStyle('name')} placeholder="Ex: Pompe à boue National 12-P-160" />
+              <input value={form.name} onChange={e => setForm({...form, name: e.target.value})} style={getIs(errors.name)} placeholder="Ex: Pompe à boue National 12-P-160" />
               {errors.name && <div style={errS}>{errors.name}</div>}
             </div>
             
-            <div style={{ marginBottom: '2rem' }}>
+            <div style={{ marginBottom: '1.5rem' }}>
               <label style={lS}>Description / Observations</label>
-              <textarea rows={3} value={form.description} onChange={e => setForm({...form, description: e.target.value})} style={{...iS, resize: 'vertical', fontFamily: 'inherit'}} placeholder="Caractéristiques techniques, état général, marque, modèle, numéro de série..." />
+              <textarea rows={3} value={form.description} onChange={e => setForm({...form, description: e.target.value})} style={{...getIs(), resize: 'vertical', fontFamily: 'inherit'}} placeholder="Caractéristiques techniques, état général, marque, modèle, numéro de série..." />
             </div>
             
             {/* Section 2: Classification */}
-            <div style={sectionStyle}>Classification</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
+            <SectionTitle titre="Classification" />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
               <div>
                 <label style={lS}>Catégorie <span style={{color: '#ef4444'}}>*</span></label>
-                <select value={form.categorie} onChange={e => handleCategoryChange(e.target.value)} style={inputStyle('categorie')}>
+                <select value={form.categorie} onChange={e => handleCategoryChange(e.target.value)} style={getIs(errors.categorie)}>
                   <option value="">Sélectionnez une catégorie...</option>
                   {CATEGORIES.map(group => (
                     <optgroup key={group.group} label={group.group}>
@@ -287,16 +318,16 @@ const NouveauMaterielModal = ({ onClose, onSuccess, initialData = null }) => {
               </div>
               <div>
                 <label style={lS}>Sous-catégorie</label>
-                <input value={form.sousCategorie} onChange={e => setForm({...form, sousCategorie: e.target.value})} style={iS} placeholder="Ex: Haute pression, Triplex..." />
+                <input value={form.sousCategorie} onChange={e => setForm({...form, sousCategorie: e.target.value})} style={getIs()} placeholder="Ex: Haute pression, Triplex..." />
               </div>
             </div>
             
             {/* Section 3: Localisation */}
-            <div style={sectionStyle}>Localisation</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
+            <SectionTitle titre="Localisation" />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
               <div>
                 <label style={lS}>Centre <span style={{color: '#ef4444'}}>*</span></label>
-                <select value={form.centreId} onChange={e => setForm({...form, centreId: e.target.value})} style={inputStyle('centreId')}>
+                <select value={form.centreId} onChange={e => setForm({...form, centreId: e.target.value})} style={getIs(errors.centreId)}>
                   <option value="">Sélectionnez un centre...</option>
                   {Object.entries(groupedCentres).map(([dir, ctrs]) => (
                     <optgroup key={dir} label={dir}>
@@ -310,7 +341,7 @@ const NouveauMaterielModal = ({ onClose, onSuccess, initialData = null }) => {
               </div>
               <div>
                 <label style={lS}>Lieu dans le centre</label>
-                <select value={form.lieuId} onChange={e => setForm({...form, lieuId: e.target.value})} style={iS} disabled={!form.centreId}>
+                <select value={form.lieuId} onChange={e => setForm({...form, lieuId: e.target.value})} style={{...getIs(), backgroundColor: form.centreId ? '#fff' : '#f9fafb'}} disabled={!form.centreId}>
                   <option value="">Sélectionnez un lieu (optionnel)</option>
                   {lieux.map(l => (
                     <option key={l.id} value={l.id}>{l.nom} ({l.type})</option>
@@ -320,35 +351,25 @@ const NouveauMaterielModal = ({ onClose, onSuccess, initialData = null }) => {
             </div>
             
             {/* Section 4: État & Statut */}
-            <div style={sectionStyle}>État & Statut</div>
-            <div style={{ marginBottom: '1.5rem' }}>
+            <SectionTitle titre="État & Statut" />
+            <div style={{ marginBottom: '1.25rem' }}>
               <label style={lS}>Statut <span style={{color: '#ef4444'}}>*</span></label>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                {['Disponible', 'En maintenance', 'En transfert', 'Hors service', 'Mis en rebut'].map(s => {
-                  const isSelected = form.status === s;
-                  const isDisabled = s === 'En transfert' && !isEditing;
-                  
-                  let color = '#64748b', bg = '#f1f5f9', border = '#cbd5e1';
-                  if (isSelected) {
-                    border = '#E05A1E';
-                    bg = '#FDF2ED';
-                    color = '#C94D18';
-                  }
-                  
+                {[
+                  { value: "Disponible",     label: "Disponible",      color: "green"  },
+                  { value: "En maintenance", label: "En maintenance",  color: "yellow" },
+                  { value: "Hors service",   label: "Hors service",    color: "red"    },
+                  { value: "Mis en rebut",   label: "Mis en rebut",    color: "gray"   },
+                ].map(s => {
+                  const isSelected = form.status === s.value;
                   return (
                     <button
-                      key={s}
+                      key={s.value}
+                      onClick={() => setForm({...form, status: s.value})}
                       type="button"
-                      disabled={isDisabled}
-                      onClick={() => setForm({...form, status: s})}
-                      style={{ padding: '0.5rem 1rem', borderRadius: '20px', border: `2px solid ${border}`, backgroundColor: bg, color, fontWeight: '700', fontSize: '0.85rem', cursor: isDisabled ? 'not-allowed' : 'pointer', opacity: isDisabled ? 0.5 : 1, transition: 'all 0.2s' }}
+                      style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', fontWeight: isSelected ? '600' : '500', borderRadius: '0.25rem', border: '1px solid', transition: 'all 0.15s', cursor: 'pointer', ...getStatutStyle(s, isSelected) }}
                     >
-                      {s === 'Disponible' && '🟢 '}
-                      {s === 'En maintenance' && '🟡 '}
-                      {s === 'En transfert' && '🔵 '}
-                      {s === 'Hors service' && '🔴 '}
-                      {s === 'Mis en rebut' && '⚫ '}
-                      {s}
+                      {s.label}
                     </button>
                   );
                 })}
@@ -356,23 +377,35 @@ const NouveauMaterielModal = ({ onClose, onSuccess, initialData = null }) => {
               {errors.status && <div style={errS}>{errors.status}</div>}
             </div>
             
-            <div style={{ marginBottom: '2rem' }}>
+            <div style={{ marginBottom: '1.5rem' }}>
               <label style={lS}>État général <span style={{color: '#ef4444'}}>*</span></label>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                {['Neuf', 'Bon', 'Usagé', 'Dégradé'].map(e => {
-                  const isSelected = form.etatGeneral === e;
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                {[
+                  { value: "Neuf",    label: "Neuf",    desc: "Non utilisé", bar: 4 },
+                  { value: "Bon",     label: "Bon",     desc: "Bon état",    bar: 3 },
+                  { value: "Usagé",   label: "Usagé",   desc: "Usure normale",bar: 2 },
+                  { value: "Dégradé", label: "Dégradé", desc: "Usure avancée",bar: 1 },
+                ].map(e => {
+                  const isSelected = form.etatGeneral === e.value;
                   return (
                     <button
-                      key={e}
+                      key={e.value}
+                      onClick={() => setForm({...form, etatGeneral: e.value})}
                       type="button"
-                      onClick={() => setForm({...form, etatGeneral: e})}
-                      style={{ padding: '0.5rem 1rem', borderRadius: '8px', border: `2px solid ${isSelected ? '#3b82f6' : '#cbd5e1'}`, backgroundColor: isSelected ? '#eff6ff' : '#fff', color: isSelected ? '#1d4ed8' : '#475569', fontWeight: '600', fontSize: '0.85rem', cursor: 'pointer' }}
+                      style={getEtatStyle(isSelected)}
                     >
-                      {e === 'Neuf' && '⭐⭐⭐⭐ '}
-                      {e === 'Bon' && '⭐⭐⭐ '}
-                      {e === 'Usagé' && '⭐⭐ '}
-                      {e === 'Dégradé' && '⭐ '}
-                      {e}
+                      {/* Barre indicateur */}
+                      <div style={{ display: 'flex', gap: '0.125rem', justifyContent: 'center', marginBottom: '0.375rem' }}>
+                        {[1,2,3,4].map(i => (
+                          <div key={i} style={{ height: '0.25rem', width: '1.25rem', borderRadius: '9999px', backgroundColor: i <= e.bar ? (isSelected ? '#f97316' : '#9ca3af') : '#e5e7eb' }} />
+                        ))}
+                      </div>
+                      <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: '500', color: isSelected ? '#c2410c' : '#374151' }}>
+                        {e.label}
+                      </p>
+                      <p style={{ margin: 0, marginTop: '0.125rem', fontSize: '0.75rem', color: isSelected ? '#f97316' : '#9ca3af' }}>
+                        {e.desc}
+                      </p>
                     </button>
                   );
                 })}
@@ -381,11 +414,11 @@ const NouveauMaterielModal = ({ onClose, onSuccess, initialData = null }) => {
             </div>
             
             {/* Section 5: Informations Complémentaires */}
-            <div style={sectionStyle}>Informations complémentaires</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <SectionTitle titre="Informations complémentaires" />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
               <div>
                 <label style={lS}>Marque / Fabricant</label>
-                <input value={form.marque} onChange={e => setForm({...form, marque: e.target.value})} style={iS} placeholder="Ex: National Oilwell" list="marques-list" />
+                <input value={form.marque} onChange={e => setForm({...form, marque: e.target.value})} style={getIs()} placeholder="Ex: National Oilwell" list="marques-list" />
                 <datalist id="marques-list">
                   <option value="National Oilwell Varco (NOV)" />
                   <option value="Schlumberger" />
@@ -398,29 +431,51 @@ const NouveauMaterielModal = ({ onClose, onSuccess, initialData = null }) => {
               </div>
               <div>
                 <label style={lS}>Modèle / Référence</label>
-                <input value={form.modele} onChange={e => setForm({...form, modele: e.target.value})} style={iS} placeholder="Ex: 12-P-160" />
+                <input value={form.modele} onChange={e => setForm({...form, modele: e.target.value})} style={getIs()} placeholder="Ex: 12-P-160" />
               </div>
               <div>
                 <label style={lS}>N° de Série</label>
-                <input value={form.numeroSerie} onChange={e => setForm({...form, numeroSerie: e.target.value})} style={iS} placeholder="Numéro de série constructeur" />
+                <input value={form.numeroSerie} onChange={e => setForm({...form, numeroSerie: e.target.value})} style={getIs()} placeholder="Numéro de série constructeur" />
               </div>
               <div>
                 <label style={lS}>Année de mise en service</label>
-                <input type="number" min="1980" max={new Date().getFullYear()} value={form.anneeService} onChange={e => setForm({...form, anneeService: e.target.value})} style={iS} placeholder="Ex: 2019" />
+                <input type="number" min="1980" max={new Date().getFullYear()} value={form.anneeService} onChange={e => setForm({...form, anneeService: e.target.value})} style={getIs()} placeholder="Ex: 2019" />
               </div>
               <div>
                 <label style={lS}>Valeur estimée (DA)</label>
-                <input type="number" step="0.01" value={form.valeurEstimee} onChange={e => setForm({...form, valeurEstimee: e.target.value})} style={iS} placeholder="Valeur en Dinars Algériens" />
+                <input type="number" step="0.01" value={form.valeurEstimee} onChange={e => setForm({...form, valeurEstimee: e.target.value})} style={getIs()} placeholder="Valeur en Dinars Algériens" />
               </div>
             </div>
             
             {/* Section 6: Photo */}
-            <div style={sectionStyle}>Photo (optionnel)</div>
+            <SectionTitle titre="Photo (optionnel)" />
             <div style={{ marginBottom: '1rem' }}>
-              <div style={{ border: '2px dashed #cbd5e1', borderRadius: '12px', padding: '2rem', textAlign: 'center', backgroundColor: '#f8fafc', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e=>e.currentTarget.style.borderColor='#E05A1E'} onMouseOut={e=>e.currentTarget.style.borderColor='#cbd5e1'}>
-                <UploadCloud size={32} color="#94a3b8" style={{ margin: '0 auto 1rem auto' }} />
-                <p style={{ margin: '0 0 0.5rem 0', fontWeight: '600', color: '#334155' }}>📷 Glissez une photo ici ou cliquez pour parcourir</p>
-                <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b' }}>JPG, PNG — max 5MB</p>
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handlePhotoChange} 
+                accept="image/jpeg, image/png" 
+                style={{ display: 'none' }} 
+              />
+              <div 
+                onClick={() => fileInputRef.current?.click()}
+                style={{ border: '1px dashed #d1d5db', borderRadius: '0.5rem', padding: form.photo ? '1rem' : '2rem', textAlign: 'center', backgroundColor: '#f9fafb', cursor: 'pointer', position: 'relative' }}
+              >
+                {form.photo ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <img src={form.photo} alt="Aperçu" style={{ maxHeight: '150px', borderRadius: '0.375rem', marginBottom: '0.5rem', objectFit: 'contain' }} />
+                    <button type="button" onClick={clearPhoto} style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '50%', padding: '0.25rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <X size={14} />
+                    </button>
+                    <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: '500', color: '#10b981' }}>✓ Photo sélectionnée</p>
+                  </div>
+                ) : (
+                  <>
+                    <UploadCloud size={32} color="#9ca3af" style={{ margin: '0 auto 0.5rem auto' }} />
+                    <p style={{ margin: '0 0 0.25rem 0', fontWeight: '500', color: '#4b5563', fontSize: '0.875rem' }}>📷 Glissez une photo ici ou cliquez pour parcourir</p>
+                    <p style={{ margin: 0, fontSize: '0.75rem', color: '#6b7280' }}>JPG, PNG — max 5MB</p>
+                  </>
+                )}
               </div>
             </div>
 
@@ -428,17 +483,17 @@ const NouveauMaterielModal = ({ onClose, onSuccess, initialData = null }) => {
         </div>
         
         {/* Footer */}
-        <div style={{ padding: '1.2rem 1.5rem', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-end', gap: '1rem', backgroundColor: '#f8fafc' }}>
-          <button type="button" onClick={onClose} style={{ padding: '0.7rem 1.5rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff', color: '#475569', fontWeight: '700', cursor: 'pointer', fontSize: '0.9rem' }}>
+        <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid #f3f4f6', display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', backgroundColor: '#f9fafb' }}>
+          <button type="button" onClick={onClose} style={{ padding: '0.625rem 1.25rem', fontSize: '0.875rem', color: '#4b5563', backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '0.5rem', cursor: 'pointer', fontWeight: '500' }}>
             Annuler
           </button>
           <button 
             type="submit" 
             form="material-form" 
-            disabled={loading || barcodeAvailable === false || inventaireAvailable === false}
-            style={{ padding: '0.7rem 1.5rem', borderRadius: '8px', border: 'none', backgroundColor: '#E05A1E', color: '#fff', fontWeight: '700', cursor: (loading || barcodeAvailable === false || inventaireAvailable === false) ? 'not-allowed' : 'pointer', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem', opacity: (loading || barcodeAvailable === false || inventaireAvailable === false) ? 0.6 : 1 }}
+            disabled={loading}
+            style={{ padding: '0.625rem 1.25rem', fontSize: '0.875rem', fontWeight: '500', color: '#fff', backgroundColor: loading ? '#94a3b8' : '#ea580c', border: 'none', borderRadius: '0.5rem', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1, display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
-            {loading ? <span style={{ display: 'inline-block', width: '16px', height: '16px', border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}/> : <Package size={18}/>}
+            {loading && <span style={{ display: 'inline-block', width: '16px', height: '16px', border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}/>}
             {isEditing ? 'Mettre à jour' : 'Enregistrer le matériel'}
           </button>
         </div>
