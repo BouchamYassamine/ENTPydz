@@ -15,6 +15,7 @@ apiClient.interceptors.request.use((config) => {
 
 export const TransferApi = {
   getTransfers: async () => { const r = await apiClient.get('/transfers'); return r.data; },
+  getTransferById: async (id) => { const r = await apiClient.get(`/transfers/${id}`); return r.data; },
   createTransfert: async (data) => { const r = await apiClient.post('/transfers', data); return r.data; },
   getTransfertsEnvoyes: async (centreId) => { const r = await apiClient.get(`/transfers/envoyes/${centreId}`); return r.data; },
   getTransfertsRecus: async (centreId) => { const r = await apiClient.get(`/transfers/recus/${centreId}`); return r.data; },
@@ -32,7 +33,7 @@ export const UserApi = {
 };
 
 export const CentreApi = {
-  getCentres: async () => { const r = await apiClient.get('/centres'); return r.data; },
+  getCentres: async (params = {}) => { const r = await apiClient.get('/centres', { params }); return r.data; },
   getCentreById: async (id) => { const r = await apiClient.get(`/centres/${id}`); return r.data; },
   createCentre: async (data) => { const r = await apiClient.post('/centres', data); return r.data; },
   updateCentre: async (id, data) => { const r = await apiClient.put(`/centres/${id}`, data); return r.data; },

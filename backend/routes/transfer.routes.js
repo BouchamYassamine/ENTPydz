@@ -6,7 +6,8 @@ import {
   createTransfer, 
   validateTransfer, 
   receiveTransfer,
-  getPendingCount
+  getPendingCount,
+  getTransferById
 } from '../controllers/transfer.controller.js';
 import { protect } from '../middlewares/auth.middleware.js';
 
@@ -23,6 +24,7 @@ router.route('/')
 router.get('/envoyes/:centreId', getTransfertsEnvoyes);
 router.get('/recus/:centreId', getTransfertsRecus);
 
+router.get('/:id', getTransferById);
 router.patch('/:id/validate', validateTransfer);
 router.patch('/:id/receive', receiveTransfer);
 

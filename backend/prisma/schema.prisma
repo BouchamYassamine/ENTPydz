@@ -121,8 +121,12 @@ model Transfer {
   destinationLieuId   Int?
   destinationLieu     Lieu?     @relation("DestinationLieu", fields: [destinationLieuId], references: [id])
 
+  numero              String?   @unique
   status              String    @default("En attente")
   urgency             String    @default("Normal")
+  quantity            Int       @default(1)
+  motif               String?
+  observations        String?
   comments            String?
   requestedAt         DateTime  @default(now())
   processedAt         DateTime?

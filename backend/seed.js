@@ -123,6 +123,21 @@ const seedDatabase = async () => {
     console.log(`  Utilisateur  : agent@entp.dz       / agent123`);
     console.log(`  Utilisateur 2: consultant@entp.dz  / cons123`);
 
+    // 6. Create Materials
+    const materialsData = [
+      { name: 'Pompe à boue Triplex', barcode: 'MAT-DFO-001', categoryId: categories[0].id, centreId: getCentreId('HMD-DFO'), lieuId: null, status: 'Disponible', currentService: 'Forage' },
+      { name: 'Moteur de fond', barcode: 'MAT-DFO-002', categoryId: categories[0].id, centreId: getCentreId('HMD-DFO'), lieuId: null, status: 'Disponible', currentService: 'Forage' },
+      { name: 'Générateur Diesel 500kVA', barcode: 'MAT-DMP-001', categoryId: categories[0].id, centreId: getCentreId('HMD-DMP'), lieuId: null, status: 'Disponible', currentService: 'Maintenance' },
+      { name: 'Tubes de Forage', barcode: 'MAT-DUET-001', categoryId: categories[4].id, centreId: getCentreId('HMD-DUET'), lieuId: null, status: 'Disponible', currentService: 'Tubulaires' },
+      { name: 'Ordinateur Portable Dell', barcode: 'IT-001', categoryId: categories[3].id, centreId: getCentreId('HMD-DG'), lieuId: null, status: 'Disponible', currentService: 'IT' },
+    ];
+
+    for (const m of materialsData) {
+      await prisma.material.create({ data: m });
+    }
+    const createdMaterials = await prisma.material.findMany();
+    console.log(`[Seed] ${createdMaterials.length} matériels créés.`);
+
     console.log('\n[Seed] Terminé avec succès !');
     process.exit(0);
   } catch (error) {

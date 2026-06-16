@@ -105,3 +105,40 @@ input, select, textarea {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--gray-400);
 }
+
+/* Styles d'impression (window.print) */
+
+/* Cacher le composant d'impression sur écran */
+#bon-transfert-print {
+  display: none;
+}
+
+@media print {
+  /* Masquer toute l'interface */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Afficher uniquement le bon de transfert */
+  #bon-transfert-print {
+    display: block !important;
+    visibility: visible !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    background: white !important;
+    z-index: 99999 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  #bon-transfert-print * {
+    visibility: visible !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 15mm 20mm;
+  }
+}

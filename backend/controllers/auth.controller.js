@@ -41,18 +41,27 @@ export const login = async (req, res, next) => {
       name: user.name,
       email: user.email,
       role: user.role,
-      service: user.service
+      centreId: user.centreId
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN || '8h'
     });
 
+    const userWithCentre = await prisma.user.findUnique({
+      where: { id: user.id },
+      include: {
+        centre: {
+          include: { direction: true }
+        }
+      }
+    });
+
     return res.status(200).json({
       success: true,
       message: 'Connexion réussie',
       token,
-      user: payload
+      user: userWithCentre
     });
   } catch (error) {
     next(error);
@@ -82,9 +91,17 @@ export const logout = async (req, res, next) => {
  */
 export const getMe = async (req, res, next) => {
   try {
+    const userWithCentre = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      include: {
+        centre: {
+          include: { direction: true }
+        }
+      }
+    });
     return res.status(200).json({
       success: true,
-      user: req.user
+      user: userWithCentre
     });
   } catch (error) {
     next(error);

@@ -72,6 +72,36 @@ export const getTransfertsRecus = async (req, res, next) => {
   } catch (error) { next(error); }
 };
 
+export const getTransferById = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    // req.params.id peut être soit l'ID numérique, soit le numero 'BT-XXXX'
+    const isNumeric = !isNaN(id) && !id.startsWith('BT');
+    
+    const transfer = await prisma.transfer.findFirst({
+      where: isNumeric ? { id: parseInt(id) } : { numero: id },
+      include: {
+        sourceCentre: { include: { direction: true } },
+        destinationCentre: { include: { direction: true } },
+        material: true,
+        requester: true,
+        approver: true
+      }
+    });
+
+    if (!transfer) return res.status(404).json({ success: false, message: 'Transfert introuvable' });
+
+    // Sécurité: vérifier si l'utilisateur a le droit de le voir
+    if (req.user.role !== 'Admin') {
+       if (transfer.sourceCentreId !== req.user.centreId && transfer.destinationCentreId !== req.user.centreId && transfer.requesterId !== req.user.id) {
+           return res.status(403).json({ success: false, message: 'Accès refusé' });
+       }
+    }
+
+    return res.status(200).json({ success: true, data: transfer });
+  } catch (error) { next(error); }
+};
+
 export const createTransfer = async (req, res, next) => {
   try {
     // Règle : Seul un Utilisateur peut créer un transfert
@@ -79,7 +109,7 @@ export const createTransfer = async (req, res, next) => {
       return res.status(403).json({ success: false, message: 'Seuls les utilisateurs peuvent créer des demandes de transfert' });
     }
 
-    const { materialId, destinationCentreId, comments } = req.body;
+    const { materialId, destinationCentreId, quantity, motif, observations, urgency } = req.body;
     const { centreId: sourceCentreId, id: requesterId } = req.user;
 
     const material = await prisma.material.findUnique({ where: { id: parseInt(materialId) } });
@@ -88,14 +118,36 @@ export const createTransfer = async (req, res, next) => {
     if (material.status !== 'Disponible') return res.status(400).json({ success: false, message: 'Le matériel n\'est pas disponible pour un transfert' });
     if (sourceCentreId === parseInt(destinationCentreId)) return res.status(400).json({ success: false, message: 'La destination doit être différente de la source' });
 
+    // Générer le numéro BT-{ANNÉE}-{0000}
+    const currentYear = new Date().getFullYear();
+    const countThisYear = await prisma.transfer.count({
+      where: {
+        createdAt: {
+          gte: new Date(`${currentYear}-01-01T00:00:00.000Z`),
+          lt: new Date(`${currentYear + 1}-01-01T00:00:00.000Z`)
+        }
+      }
+    });
+    const numero = `BT-${currentYear}-${String(countThisYear + 1).padStart(4, '0')}`;
+
     const transfer = await prisma.transfer.create({
       data: {
+        numero,
         sourceCentreId,
         destinationCentreId: parseInt(destinationCentreId),
         materialId: parseInt(materialId),
         requesterId,
-        comments,
+        quantity: quantity ? parseInt(quantity) : 1,
+        motif,
+        observations,
+        urgency: urgency || 'Normal',
         status: 'En attente'
+      },
+      include: {
+        sourceCentre: { include: { direction: true } },
+        destinationCentre: { include: { direction: true } },
+        material: true,
+        requester: true
       }
     });
     await prisma.material.update({ where: { id: parseInt(materialId) }, data: { status: 'En Transfert' } });

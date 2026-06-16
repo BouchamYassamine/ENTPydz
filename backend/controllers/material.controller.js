@@ -10,8 +10,8 @@ export const getMaterials = async (req, res, next) => {
     const { role, centreId: userCentreId } = req.user;
 
     const where = {};
-    // Admin Centre ne voit que les matériels de SON centre
-    if (role === 'Admin Centre') {
+    // Admin Centre et Utilisateur ne voient que les matériels de LEUR centre
+    if (role === 'Admin Centre' || role === 'Utilisateur') {
       where.centreId = userCentreId;
     } else {
       if (categorieId) where.categoryId = parseInt(categorieId);
